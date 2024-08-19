@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace CreationsPlatformWebApplication.DataAccess.Migrations
 {
-    [DbContext(typeof(CreationsPlatformDbContext))]
+    [DbContext(typeof(ApplicationDbContext))]
     partial class CreationsPlatformDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

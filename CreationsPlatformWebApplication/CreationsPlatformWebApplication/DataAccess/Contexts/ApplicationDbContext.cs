@@ -3,14 +3,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CreationsPlatformWebApplication.DataAccess.Contexts;
 
-public class CreationsPlatformDbContext : DbContext
+public class ApplicationDbContext : DbContext
 {
-    public CreationsPlatformDbContext()
+    public ApplicationDbContext()
     {
         
     }
 
-    public CreationsPlatformDbContext(DbContextOptions<CreationsPlatformDbContext> options) : base(options)
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
     }
 
@@ -18,7 +18,7 @@ public class CreationsPlatformDbContext : DbContext
 
     public virtual DbSet<CreationEntity> Creations { get; set; }
 
-    public virtual DbSet<UserEntity> Users { get; set; }
+    public virtual DbSet<UserEntity?> Users { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

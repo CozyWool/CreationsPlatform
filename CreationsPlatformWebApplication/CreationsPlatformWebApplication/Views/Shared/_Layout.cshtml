@@ -1,0 +1,62 @@
+﻿<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>@ViewBag.Title</title>
+    <link href="~/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="~/css/style.css" rel="stylesheet" type="text/css">
+</head>
+<header>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <div class="container-fluid">
+            <a class="navbar-brand" asp-area="" asp-controller="Library" asp-action="Index">Библиотека</a>
+            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <ul class="navbar-nav flex-grow-1">
+                    @if (User.Identity is {IsAuthenticated: true})
+                    {
+                        <ul class="navbar-nav flex-grow-1">
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="CreationsPlatform" asp-action="Index">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="CreationsPlatform" asp-action="UserData">UserData</a>
+                            </li>
+                        </ul>
+                        <ul class="navbar-nav float-left">
+                            <li class="nav-item">
+                                <a class="nav-link text-dark">Здравствуйте, @User.Identity.Name!</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Logout">Выйти</a>
+                            </li>
+                        </ul>
+                    }
+                    else
+                    {
+                        <ul class="navbar-nav flex-grow-1">
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="CreationsPlatform" asp-action="Index">Главная</a>
+                            </li>
+                        </ul>
+                        <ul class="navbar-nav float-left">
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Register">Зарегистрироваться</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Войти</a>
+                            </li>
+                        </ul>
+                    }
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+<body>
+@RenderBody()
+<script src="~/js/bootstrap.min.js"></script>
+</body>
+</html>
