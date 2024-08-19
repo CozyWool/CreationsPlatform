@@ -14,4 +14,12 @@
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Views\Library\CreateBook.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Library\DetailedBook.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Library\EditBook.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Library\FilteredBooks.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Library\Index.cshtml" />
+    </ItemGroup>
+
 </Project>

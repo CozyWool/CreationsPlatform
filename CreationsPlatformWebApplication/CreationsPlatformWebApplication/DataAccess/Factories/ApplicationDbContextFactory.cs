@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore.Design;
 
 namespace CreationsPlatformWebApplication.DataAccess.Factories;
 
-public class CreationsPlatformDbContextFactory : IDesignTimeDbContextFactory<CreationsPlatformDbContext>
+public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
 {
-    public CreationsPlatformDbContext CreateDbContext(string[] args)
+    public ApplicationDbContext CreateDbContext(string[] args)
     {
         const string connectionString = "Host=localhost;Port=5432;Username=postgres;Password=1;Database=CreationsPlatform;";
-        var optionsBuilder = new DbContextOptionsBuilder<CreationsPlatformDbContext>();
+        var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
         optionsBuilder.UseNpgsql(connectionString);
-        return new CreationsPlatformDbContext(optionsBuilder.Options);
+        return new ApplicationDbContext(optionsBuilder.Options);
     }
 }
