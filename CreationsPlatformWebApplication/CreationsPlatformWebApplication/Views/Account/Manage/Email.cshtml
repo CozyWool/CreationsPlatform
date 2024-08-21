@@ -1,0 +1,24 @@
+@{
+    Layout = "Manage/_ManageNav";
+}
+@using CreationsPlatformWebApplication.Models.Manage
+@model EmailModel
+
+<partial name="_StatusMessage" for="StatusMessage"/>
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Email" asp-controller="Account" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            <div class="form-floating mb-2">
+                <input type="email" class="form-control" asp-for="Email" readonly>
+                <label asp-for="Email">@Html.DisplayNameFor(m => m.Email)</label>
+            </div>
+            <div class="form-floating mb-2">
+                <input type="email" autocomplete="email" asp-for="NewEmail" class="form-control"/>
+                <label asp-for="NewEmail">@Html.DisplayNameFor(m => m.NewEmail)</label>
+                <span asp-validation-for="NewEmail" class="text-danger"></span>
+            </div>
+            <button type="submit" class="w-100 btn btn-lg btn-primary">Сохранить</button>
+        </form>
+    </div>
+</div>
