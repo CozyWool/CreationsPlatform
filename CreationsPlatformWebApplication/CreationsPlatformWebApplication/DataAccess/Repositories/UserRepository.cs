@@ -19,9 +19,19 @@ public class UserRepository(ApplicationDbContext dbContext) : IUserRepository
             .Users
             .FirstOrDefaultAsync(x => x.Email == email);
 
-    public async Task<UserEntity> GetByLogin(string login) => await dbContext
+    public async Task<UserEntity?> GetByEmailOrUsername(string email = null, string username = null)
+    {
+        if (email == null && username == null)
+            return null;
+
+        return await dbContext
+            .Users
+            .FirstOrDefaultAsync(x => x.Username == username || x.Email == email);
+    }
+
+    public async Task<UserEntity> GetByUsername(string username) => await dbContext
         .Users
-        .FirstOrDefaultAsync(x => x.Login == login);
+        .FirstOrDefaultAsync(x => x.Username == username);
 
     public async Task Create(UserEntity? entity)
     {
@@ -29,12 +39,22 @@ public class UserRepository(ApplicationDbContext dbContext) : IUserRepository
         await dbContext.SaveChangesAsync();
     }
 
-    public async Task Delete(Guid id)
+    public async Task<bool> Delete(Guid id)
     {
         var entity = await GetById(id);
-        if (entity == null) return;
+        if (entity == null) return false;
         entity.IsDeleted = true;
         await Update(entity);
+        return true;
+    }
+
+    public async Task<bool> Delete(string username)
+    {
+        var entity = await GetByUsername(username);
+        if (entity == null) return false;
+        entity.IsDeleted = true;
+        await Update(entity);
+        return true;
     }
 
     public async Task Update(UserEntity entity)

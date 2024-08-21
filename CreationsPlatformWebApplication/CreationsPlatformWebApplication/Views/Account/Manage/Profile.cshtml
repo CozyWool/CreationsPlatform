@@ -1,0 +1,25 @@
+@{
+    Layout = "Manage/_ManageNav";
+}
+@using CreationsPlatformWebApplication.Models.Manage
+@model ProfileModel
+
+<partial name="_StatusMessage" for="StatusMessage"/>
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Profile" asp-controller="Account" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            <input type="text" asp-for="OldUsername" hidden>
+            <div class="form-floating mb-2">
+                <input type="text" class="form-control" asp-for="Username">
+                <label asp-for="Username">@Html.DisplayNameFor(m => m.Username)</label>
+                <span asp-validation-for="Username" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-2">
+                <input type="date" asp-for="CreatedDate" class="form-control" readonly/>
+                <label asp-for="CreatedDate">@Html.DisplayNameFor(m => m.CreatedDate)</label>
+            </div>
+            <button type="submit" class="w-100 btn btn-lg btn-primary">Сохранить</button>
+        </form>
+    </div>
+</div>

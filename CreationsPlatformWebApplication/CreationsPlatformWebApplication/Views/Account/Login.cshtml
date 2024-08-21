@@ -5,25 +5,25 @@
 <main class="form-signin w-100 m-auto">
     <form asp-action="Login" asp-controller="Account" method="post">
         <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]"/>
-        <div class="validation" asp-validation-summary="ModelOnly"></div>
-        
-        <div class="form-floating">
-            <input type="email" class="form-control" asp-for="Email">
-            <label asp-for="Email">@Html.DisplayNameFor(m => m.Email)</label>
-            <span asp-validation-for="Email" class="text-danger"></span>
+        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+        <div class="form-floating mb-2">
+            <input type="text" class="form-control" asp-for="UsernameOrEmail">
+            <label asp-for="UsernameOrEmail">@Html.DisplayNameFor(m => m.UsernameOrEmail)</label>
+            <span asp-validation-for="UsernameOrEmail" class="text-danger"></span>
         </div>
-        <div class="form-floating mt-2">
+        <div class="form-floating mb-2">
             <input type="password" asp-for="Password" class="form-control"/>
             <label asp-for="Password">@Html.DisplayNameFor(m => m.Password)</label>
             <span asp-validation-for="Password" class="text-danger"></span>
         </div>
-        <div class="form-check text-start my-3">
+        <div class="form-check text-start my-3 mb-2">
             <input class="form-check-input" type="checkbox" asp-for="RememberMe">
             <label class="form-check-label" asp-for="RememberMe">@Html.DisplayNameFor(m => m.RememberMe)</label>
         </div>
 
-        <div>
-            <button class="btn btn-primary w-100 py-2 mt-2" type="submit">Войти</button>
+        <div class="mb-2">
+            <button class="btn btn-primary w-100 py-2" type="submit">Войти</button>
             <a asp-action="Register" asp-controller="Account" class="btn btn-secondary w-100 py-2 mt-2">Регистрация</a>
         </div>
     </form>

@@ -79,9 +79,9 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.IsDeleted)
                 .HasDefaultValue(false)
                 .HasColumnName("is_deleted");
-            entity.Property(e => e.Login)
+            entity.Property(e => e.Username)
                 .HasMaxLength(75)
-                .HasColumnName("login");
+                .HasColumnName("username");
             entity.Property(e => e.PasswordHash).HasColumnName("password_hash");
         });
 
