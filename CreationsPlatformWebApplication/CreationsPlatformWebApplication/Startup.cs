@@ -2,6 +2,7 @@ using CreationsPlatformWebApplication.DataAccess.Contexts;
 using CreationsPlatformWebApplication.DataAccess.Repositories;
 using CreationsPlatformWebApplication.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace CreationsPlatformWebApplication;
@@ -12,12 +13,20 @@ public class Startup(IConfiguration configuration)
     {
         services.AddHttpContextAccessor();
 
+        services.AddAutoMapper(typeof(Startup).Assembly);
+
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUserService, UserService>();
         
+        services.AddScoped<ICreationRepository, CreationRepository>();
+        services.AddScoped<ICreationService, CreationService>();
+
+        services.AddScoped<IGenreRepository, GenreRepository>();
+        services.AddScoped<IGenreService, GenreService>();
+
         services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(options =>
             {
@@ -25,6 +34,11 @@ public class Startup(IConfiguration configuration)
                 options.LogoutPath = new PathString(CookieAuthenticationDefaults.LogoutPath);
                 options.AccessDeniedPath = new PathString(CookieAuthenticationDefaults.AccessDeniedPath);
                 options.Cookie.HttpOnly = true;
+            });
+        services.AddOptions<MvcOptions>()
+            .Configure<ILoggerFactory>((options, loggerFactory) =>
+            {
+                // options.ModelBinderProviders.Insert(0, new CustomCreationModelBinderProvider(loggerFactory));
             });
         services.AddMvc();
     }

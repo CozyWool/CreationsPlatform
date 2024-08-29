@@ -14,4 +14,5 @@ public interface IUserService
     Task<UserServiceStatusCodes> UpdatePassword(PasswordModel model);
     Task<UserServiceStatusCodes> VerifyPassword(string usernameOrLogin, string password);
     Task<UserServiceStatusCodes> DeleteUser(string name);
+    Task<AuthorModel?> GetAuthorById(Guid id);
 }

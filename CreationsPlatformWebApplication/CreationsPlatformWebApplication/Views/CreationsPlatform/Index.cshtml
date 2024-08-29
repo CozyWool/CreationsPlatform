@@ -1,1 +1,52 @@
-<p>Пока ничего нет</p>
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model List<CreationModel>
+
+<table class="table table-sm table-hover table-bordered table-striped">
+    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(m => m.First().Id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(m => m.First().Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(m => m.First().Author)
+        </th>
+        <th>
+            @Html.DisplayNameFor(m => m.First().PublicationDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(m => m.First().Rating)
+        </th>
+        @* <th></th> *@
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var creation in Model)
+    {
+        <tr>
+            <td>
+                @creation.Id
+            </td>
+            <td>
+                <a class="link" asp-controller="CreationsPlatform" asp-action="GetById" asp-route-id="@creation.Id">
+                    &quot;@creation.Title&quot;
+                </a>
+            </td>
+            <td>@creation.Author.Username</td>
+            <td>@creation.PublicationDate</td>
+            <td>@creation.Rating (@creation.RatingCount оценок)</td>
+            @* <td> *@
+            @*     <a asp-controller="CreationsPlatform" asp-action="Edit" asp-route-id="@creation.Id" class="btn btn-sm btn-warning"> *@
+            @*         Изменить *@
+            @*     </a> *@
+            @*     <a id="delete-btn" class="btn btn-sm btn-danger" onclick="deleteBook(@creation.Id)"> *@
+            @*         Удалить *@
+            @*     </a> *@
+            @* </td> *@
+        </tr>
+    }
+
+    </tbody>
+</table>
