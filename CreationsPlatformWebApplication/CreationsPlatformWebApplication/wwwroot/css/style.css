@@ -27,3 +27,11 @@
 .glyphicon-chevron-up:before {
     content: "\f077";
 }
+
+.genre-select {
+    max-width: 150px;
+}
+
+.genre-div {
+    display: inline-block;
+}

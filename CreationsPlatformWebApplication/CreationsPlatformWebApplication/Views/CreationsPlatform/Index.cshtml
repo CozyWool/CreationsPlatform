@@ -19,7 +19,7 @@
         <th>
             @Html.DisplayNameFor(m => m.First().Rating)
         </th>
-        @* <th></th> *@
+        <th>Действия</th>
     </tr>
     </thead>
     <tbody>
@@ -37,16 +37,33 @@
             <td>@creation.Author.Username</td>
             <td>@creation.PublicationDate</td>
             <td>@creation.Rating (@creation.RatingCount оценок)</td>
-            @* <td> *@
-            @*     <a asp-controller="CreationsPlatform" asp-action="Edit" asp-route-id="@creation.Id" class="btn btn-sm btn-warning"> *@
-            @*         Изменить *@
-            @*     </a> *@
-            @*     <a id="delete-btn" class="btn btn-sm btn-danger" onclick="deleteBook(@creation.Id)"> *@
-            @*         Удалить *@
-            @*     </a> *@
-            @* </td> *@
+            <td>
+                <a asp-controller="CreationsPlatform" asp-action="Edit" asp-route-id="@creation.Id" class="btn btn-sm btn-warning">
+                    Изменить
+                </a>
+                <a id="delete-btn" class="btn btn-sm btn-danger" onclick="deleteItem(@creation.Id)">
+                    Удалить
+                </a>
+            </td>
         </tr>
     }
 
     </tbody>
 </table>
+
+<script type="text/javascript">
+    document.getElementById("delete-btn").addEventListener("click", deleteItem);
+    async function deleteItem(id) {
+        try  {
+            await fetch(`/CreationsPlatform/` + id, {
+                method: "DELETE",
+                headers: { "Accept": "application/json", "Content-Type": "application/json" }
+            });
+            
+            window.location.href = '/';
+        } catch (error) {
+            console.log(error);
+            alert('Произошла ошибка при удалении/Нет доступа');
+        }
+    }
+</script>

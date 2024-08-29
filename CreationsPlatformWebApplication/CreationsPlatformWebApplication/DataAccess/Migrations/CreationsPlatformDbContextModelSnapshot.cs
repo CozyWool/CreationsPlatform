@@ -34,7 +34,7 @@ namespace CreationsPlatformWebApplication.DataAccess.Migrations
 
                     b.HasIndex("GenresId");
 
-                    b.ToTable("CreationEntityGenreEntity");
+                    b.ToTable("CreationEntityGenreEntity", (string)null);
                 });
 
             modelBuilder.Entity("CreationsPlatformWebApplication.DataAccess.Entities.CommentEntity", b =>
@@ -66,7 +66,7 @@ namespace CreationsPlatformWebApplication.DataAccess.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Comments");
+                    b.ToTable("Comments", (string)null);
                 });
 
             modelBuilder.Entity("CreationsPlatformWebApplication.DataAccess.Entities.CreationEntity", b =>
@@ -113,7 +113,7 @@ namespace CreationsPlatformWebApplication.DataAccess.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("Creations");
+                    b.ToTable("Creations", (string)null);
                 });
 
             modelBuilder.Entity("CreationsPlatformWebApplication.DataAccess.Entities.GenreEntity", b =>
@@ -134,7 +134,7 @@ namespace CreationsPlatformWebApplication.DataAccess.Migrations
                     b.HasKey("Id")
                         .HasName("Genres_pkey");
 
-                    b.ToTable("Genres");
+                    b.ToTable("Genres", (string)null);
                 });
 
             modelBuilder.Entity("CreationsPlatformWebApplication.DataAccess.Entities.UserEntity", b =>
@@ -173,7 +173,7 @@ namespace CreationsPlatformWebApplication.DataAccess.Migrations
                     b.HasKey("Id")
                         .HasName("Users_pkey");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("CreationEntityGenreEntity", b =>
