@@ -1,0 +1,36 @@
+@model CreationModel
+
+<div>
+    <div class="row creation-detailed w-100 m-auto">
+        <div class="col-md-12">
+            <h1>@Model.Title</h1>
+            <p>@Html.DisplayNameFor(m => m.Author) <b>@Model.Author.Username</b></p>
+            <p>
+                @Html.DisplayNameFor(m => m.Genres):
+                @for (var i = 0; i < Model.Genres.Count; i++)
+                {
+                <b>@Model.Genres[i]@(i + 1 == Model.Genres.Count ? "" : ", ")</b>
+                }
+            </p>
+            <p>@Html.DisplayNameFor(m => m.Rating): <b>@Model.Rating (@Model.RatingCount ratings)</b></p>
+            <p>@Html.DisplayNameFor(m => m.PublicationDate): <b>@Model.PublicationDate.ToShortDateString()</b></p>
+        </div>
+    </div>
+        <textarea class="content m-auto w-100 form-control-plaintext" rows="19" readonly>@Model.Content</textarea>
+    
+</div>
+<footer class="border-top footer">
+    <div class="container">
+        <a class="btn btn-primary text-center btn-lg w-100 btn-sm content" href="/">Вернуться на главную</a>
+    </div>
+</footer>
+
+<style>
+    .creation-detailed {
+        max-width: 550px;
+    }
+
+    .content {
+        max-width: 1200px;
+    }
+</style>
