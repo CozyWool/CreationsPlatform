@@ -10,12 +10,6 @@
                 <span asp-validation-for="Creation.Title" class="text-danger"></span>
             </div>
             <div class="form-floating mb-2">
-                <textarea class="form-control m-auto w-100" rows="19" asp-for="Creation.Content"></textarea>
-                <label asp-for="Creation.Content">@Html.DisplayNameFor(m => m.Creation.Content)</label>
-                <span asp-validation-for="Creation.Content" class="text-danger"></span>
-            </div>
-
-            <div class="form-floating mb-2">
                 <button type="submit" class="btn btn-sm btn-primary mb-2" asp-action="AddGenre">Добавить жанр</button>
                 @for (var i = 0; i < Model.Creation.Genres.Count; i++)
                 {
@@ -25,18 +19,13 @@
                     </div>
                 }
             </div>
+            <div class="form-floating mb-2">
+                <textarea class="form-control m-auto w-100" rows="37" asp-for="Creation.Content"></textarea>
+                <label asp-for="Creation.Content">@Html.DisplayNameFor(m => m.Creation.Content)</label>
+                <span asp-validation-for="Creation.Content" class="text-danger"></span>
+            </div>
             <button type="submit" class="w-100 btn btn-lg btn-primary mb-2">Опубликовать</button>
             <a class="w-100 btn btn-lg btn-secondary" asp-action="Index">Назад</a>
         </form>
     </div>
 </div>
-
-<style>
-    .genre-select
-    {
-        max-width: 150px;
-    }
-    .genre-div{
-        display: inline-block;
-    }
-</style>

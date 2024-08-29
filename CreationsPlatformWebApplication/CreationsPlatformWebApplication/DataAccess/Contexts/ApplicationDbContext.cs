@@ -14,10 +14,8 @@ public class ApplicationDbContext : DbContext
     }
 
     public virtual DbSet<CommentEntity> Comments { get; set; }
-
     public virtual DbSet<CreationEntity> Creations { get; set; }
     public virtual DbSet<GenreEntity> Genres { get; set; }
-
     public virtual DbSet<UserEntity?> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -65,7 +63,8 @@ public class ApplicationDbContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("author_id_fk");
 
-            entity.HasMany(d => d.Genres).WithMany(); //p => p.Creations);
+            entity.HasMany(d => d.Genres)
+                .WithMany(p => p.Creations);
         });
 
         modelBuilder.Entity<UserEntity>(entity =>

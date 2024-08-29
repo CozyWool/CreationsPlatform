@@ -12,6 +12,7 @@ public class CreationRepository(ApplicationDbContext dbContext) : ICreationRepos
     public async Task<CreationEntity?> GetById(int id) =>
         await dbContext
             .Creations
+            .Include(entity => entity.Genres)
             .FirstOrDefaultAsync(x => x.Id == id);
 
     public async Task<List<CreationEntity?>> GetByAuthorId(Guid id) =>
@@ -24,17 +25,41 @@ public class CreationRepository(ApplicationDbContext dbContext) : ICreationRepos
     public async Task Create(CreationEntity entity)
     {
         entity.Author = null!;
+        
+        await KostylSManyToMany(entity.Genres);
+        
         if (entity.Id <= 0)
         {
             entity.Id = dbContext.Creations.OrderBy(e => e.Id).Last().Id + 1;
         }
-        entity.PublicationDate = DateTime.SpecifyKind(entity.PublicationDate, DateTimeKind.Utc);
+        entity.PublicationDate = DateTime.SpecifyKind(entity.PublicationDate, DateTimeKind.Utc);    
+        
         
         dbContext.Creations.Add(entity);
         await dbContext.SaveChangesAsync();
     }
+    public async Task Update(CreationEntity entity)
+    {
+        await KostylSManyToMany(entity.Genres);
+        
+        dbContext.Update(entity);
+        await dbContext.SaveChangesAsync();
+    }
 
-
+    //TODO: надо че-то делать с ним
+    //TODO: 4 часа убил, все никак не понял как правильно инсертить Many-to-Many сущности, если уже есть запись в таблице
+    //TODO: edit не работает с этим костылём ***
+    private async Task KostylSManyToMany(ICollection<GenreEntity> list)
+    {
+        foreach (var genre in list)
+        {
+            var genreInDb = await dbContext.Genres.FindAsync(genre.Id);
+            if (genreInDb != null)
+            {
+                dbContext.Genres.Remove(genreInDb);
+            }
+        }
+    }
     public async Task<bool> Delete(int id)
     {
         var entity = await GetById(id);
@@ -45,9 +70,4 @@ public class CreationRepository(ApplicationDbContext dbContext) : ICreationRepos
         return true;
     }
 
-    public async Task Update(CreationEntity entity)
-    {
-        dbContext.Update(entity);
-        await dbContext.SaveChangesAsync();
-    }
 }
