@@ -16,7 +16,10 @@ public class Startup(IConfiguration configuration)
         services.AddAutoMapper(typeof(Startup).Assembly);
 
         services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+        {
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
+            options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+        });
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUserService, UserService>();

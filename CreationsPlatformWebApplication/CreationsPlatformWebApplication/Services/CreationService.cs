@@ -27,10 +27,11 @@ public class CreationService(ICreationRepository creationRepository, IMapper map
     {
         var oldEntity = await creationRepository.GetById(model.Id);
         if (oldEntity == null) return;
-        // oldEntity.Genres = model.Genres;
-        oldEntity.PublicationDate = model.PublicationDate;
+        oldEntity.Title = model.Title;
+        oldEntity.Genres = mapper.Map<List<GenreEntity>>(model.Genres);
         oldEntity.Rating = model.Rating;
         oldEntity.RatingCount = model.RatingCount;
+        oldEntity.Content = model.Content;
         await creationRepository.Update(oldEntity);
     }
 

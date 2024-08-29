@@ -94,17 +94,23 @@ public class CreationsPlatformController : Controller
     }
 
     [HttpPost("edit")]
-    public IActionResult Edit([FromForm] CreationModel creationModel)
+    public async Task<IActionResult> Edit([FromForm(Name = "Creation")] CreationModel creationModel)
     {
         if (creationModel.Author.Id.ToString() != User.Claims.FirstOrDefault(claim => claim.Type == "UserId").Value)
             return RedirectToAction("AccessDenied", "Account");
 
-        _creationService.Update(creationModel);
+        creationModel.Genres = await _genreService
+            .FillNameField(
+                creationModel
+                    .Genres
+                    .DistinctBy(e => e.Id)
+                    .ToList());
+        await _creationService.Update(creationModel);
         return RedirectToAction(nameof(Index));
     }
 
     [HttpPost("add-genre")]
-    public IActionResult AddGenre([FromForm(Name = "Creation")] CreationModel creationModel)
+    public IActionResult AddGenre([FromForm(Name = "Creation")] CreationModel creationModel, [FromQuery] bool isEdit)
     {
         creationModel.Genres.Add(new GenreModel
         {
@@ -118,11 +124,12 @@ public class CreationsPlatformController : Controller
         };
 
         ViewData["Title"] = "Публикация произведения";
-        return View("CreateCreation", creationViewModel);
+        return View(isEdit ? "EditCreation" : "CreateCreation", creationViewModel);
     }
 
     [HttpPost("remove-genre/{index:int}")]
-    public IActionResult RemoveGenre(int index, [FromForm(Name = "Creation")] CreationModel creationModel)
+    public IActionResult RemoveGenre(int index, [FromForm(Name = "Creation")] CreationModel creationModel,
+        [FromQuery] bool isEdit)
     {
         ViewData["Title"] = "Публикация произведения";
         CreationViewModel? creationViewModel;
@@ -133,7 +140,7 @@ public class CreationsPlatformController : Controller
                 Creation = creationModel,
                 Genres = _genres
             };
-            return View("CreateCreation", creationViewModel);
+            return View(isEdit ? "EditCreation" : "CreateCreation", creationViewModel);
         }
 
         creationModel.Genres.RemoveAt(index);
@@ -143,6 +150,20 @@ public class CreationsPlatformController : Controller
             Genres = _genres
         };
 
-        return View("CreateCreation", creationViewModel);
+        return View(isEdit ? "EditCreation" : "CreateCreation", creationViewModel);
+    }
+
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        if ((await _creationService.GetById(id)).Author.Id.ToString() !=
+            User.Claims.FirstOrDefault(claim => claim.Type == "UserId").Value)
+            return RedirectToAction("AccessDenied", "Account");
+        if (await _creationService.Delete(id))
+        {
+            return Ok();
+        }
+
+        return BadRequest();
     }
 }

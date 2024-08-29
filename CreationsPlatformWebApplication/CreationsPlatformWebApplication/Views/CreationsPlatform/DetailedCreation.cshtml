@@ -9,14 +9,14 @@
                 @Html.DisplayNameFor(m => m.Genres):
                 @for (var i = 0; i < Model.Genres.Count; i++)
                 {
-                <b>@Model.Genres[i]@(i + 1 == Model.Genres.Count ? "" : ", ")</b>
+                <b>@Model.Genres[i].Name@(i + 1 == Model.Genres.Count ? "" : ", ")</b>
                 }
             </p>
             <p>@Html.DisplayNameFor(m => m.Rating): <b>@Model.Rating (@Model.RatingCount ratings)</b></p>
             <p>@Html.DisplayNameFor(m => m.PublicationDate): <b>@Model.PublicationDate.ToShortDateString()</b></p>
         </div>
     </div>
-        <textarea class="content m-auto w-100 form-control-plaintext" rows="19" readonly>@Model.Content</textarea>
+        <textarea class="content m-auto w-100 form-control-plaintext" rows="37" readonly>@Model.Content</textarea>
     
 </div>
 <footer class="border-top footer">
