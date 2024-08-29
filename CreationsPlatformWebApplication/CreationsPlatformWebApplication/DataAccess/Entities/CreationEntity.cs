@@ -1,10 +1,13 @@
-﻿namespace CreationsPlatformWebApplication.DataAccess.Entities;
+﻿using CreationsPlatformWebApplication.Enums;
+
+namespace CreationsPlatformWebApplication.DataAccess.Entities;
 
 public class CreationEntity
 {
     public int Id { get; set; }
+    public string Title { get; set; }
+    public string Content { get; set; }
 
-    public List<string> Genre { get; set; } = null!;
 
     public DateTime PublicationDate { get; set; }
 
@@ -17,4 +20,5 @@ public class CreationEntity
     public virtual UserEntity Author { get; set; } = null!;
 
     public virtual ICollection<CommentEntity> Comments { get; set; } = new List<CommentEntity>();
+    public virtual ICollection<GenreEntity> Genres { get; set; } = new List<GenreEntity>();
 }

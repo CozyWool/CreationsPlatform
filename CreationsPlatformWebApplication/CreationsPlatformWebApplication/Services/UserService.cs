@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using AutoMapper;
 using CreationsPlatformWebApplication.DataAccess.Entities;
 using CreationsPlatformWebApplication.DataAccess.Repositories;
 using CreationsPlatformWebApplication.Helpers;
@@ -14,11 +15,19 @@ public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IMapper _mapper;
 
-    public UserService(IUserRepository userRepository, IHttpContextAccessor httpContextAccessor)
+    public UserService(IUserRepository userRepository, IHttpContextAccessor httpContextAccessor, IMapper mapper)
     {
         _userRepository = userRepository;
         _httpContextAccessor = httpContextAccessor;
+        _mapper = mapper;
+        if (!_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated) return;
+        
+        var user = _userRepository.GetByUsername(_httpContextAccessor.HttpContext.User.Identity.Name).Result;
+        var rememberMe = _httpContextAccessor.HttpContext
+            .User.HasClaim("RememberMe", true.ToString());
+        Authenticate(user, rememberMe);
     }
 
     public async Task<UserServiceStatusCodes> Login(LoginModel model)
@@ -105,7 +114,7 @@ public class UserService : IUserService
 
         user.PasswordHash = SecurityHelper.GenerateSaltedHash(model.NewPassword, user.Id.ToString());
         await _userRepository.Update(user);
-        //TODO: Надо бы как-нибудь разлогинть все существующие сессии, но я без понятия как
+        //TODO: Надо бы как-нибудь разлогинть все существующие сессии пользователя, но я без понятия как
         return UserServiceStatusCodes.OK;
     }
 
@@ -125,6 +134,12 @@ public class UserService : IUserService
         return UserServiceStatusCodes.OK;
     }
 
+    public async Task<AuthorModel?> GetAuthorById(Guid id)
+    {
+        var user = await _userRepository.GetById(id);
+        return _mapper.Map<AuthorModel>(user) ?? null;
+    }
+
     private async Task Authenticate(UserEntity user, bool rememberMe)
     {
         if (_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
@@ -136,11 +151,12 @@ public class UserService : IUserService
         {
             new(ClaimTypes.Name, user.Username),
             new(ClaimTypes.Email, user.Email),
-            new("CreatedDate", user.CreatedDate.ToShortDateString())
+            new("CreatedDate", user.CreatedDate.ToShortDateString()),
+            new("UserId", user.Id.ToString())
         };
         if (rememberMe)
         {
-            claims.Add(new Claim("RememberMe", true.ToString()));
+            claims.Add(new Claim("RememberMe", rememberMe.ToString()));
         }
 
         var id = new ClaimsIdentity(claims,
@@ -152,4 +168,5 @@ public class UserService : IUserService
                 new ClaimsPrincipal(id),
                 new AuthenticationProperties {IsPersistent = rememberMe});
     }
+    
 }

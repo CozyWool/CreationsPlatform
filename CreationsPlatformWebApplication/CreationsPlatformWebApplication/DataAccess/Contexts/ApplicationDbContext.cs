@@ -7,7 +7,6 @@ public class ApplicationDbContext : DbContext
 {
     public ApplicationDbContext()
     {
-        
     }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
@@ -17,9 +16,10 @@ public class ApplicationDbContext : DbContext
     public virtual DbSet<CommentEntity> Comments { get; set; }
 
     public virtual DbSet<CreationEntity> Creations { get; set; }
+    public virtual DbSet<GenreEntity> Genres { get; set; }
 
     public virtual DbSet<UserEntity?> Users { get; set; }
-    
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<CommentEntity>(entity =>
@@ -47,10 +47,11 @@ public class ApplicationDbContext : DbContext
             entity.HasKey(e => e.Id).HasName("Creations_pkey");
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Title).HasColumnName("title");
+            entity.Property(e => e.Content)
+                .HasColumnType("text")
+                .HasColumnName("content");
             entity.Property(e => e.AuthorId).HasColumnName("author_id");
-            entity.Property(e => e.Genre)
-                .HasColumnType("character varying[]")
-                .HasColumnName("genre");
             entity.Property(e => e.PublicationDate).HasColumnName("publication_date");
             entity.Property(e => e.Rating)
                 .HasDefaultValue(0)
@@ -63,6 +64,8 @@ public class ApplicationDbContext : DbContext
                 .HasForeignKey(d => d.AuthorId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("author_id_fk");
+
+            entity.HasMany(d => d.Genres).WithMany(); //p => p.Creations);
         });
 
         modelBuilder.Entity<UserEntity>(entity =>
@@ -85,6 +88,14 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.PasswordHash).HasColumnName("password_hash");
         });
 
-    }
+        modelBuilder.Entity<GenreEntity>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("Genres_pkey");
 
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Name)
+                .HasMaxLength(100)
+                .HasColumnName("name");
+        });
+    }
 }
