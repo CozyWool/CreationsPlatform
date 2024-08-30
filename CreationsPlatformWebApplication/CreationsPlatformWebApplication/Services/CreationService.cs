@@ -1,9 +1,7 @@
 using AutoMapper;
-using CreationsPlatformWebApplication.Controllers;
 using CreationsPlatformWebApplication.DataAccess.Entities;
 using CreationsPlatformWebApplication.DataAccess.Repositories;
-using CreationsPlatformWebApplication.Messages;
-using CreationsPlatformWebApplication.Models;
+using CreationsPlatformWebApplication.Enums;
 using CreationsPlatformWebApplication.Models.Creation;
 
 namespace CreationsPlatformWebApplication.Services;
@@ -43,10 +41,25 @@ public class CreationService(ICreationRepository creationRepository, IMapper map
     public async Task<List<CreationModel?>> GetUsersCreations(Guid userId) =>
         mapper.Map<List<CreationModel?>>(await creationRepository.GetUsersCreations(userId));
 
-    public async Task<(List<CreationModel>, int)> GetPagedSortedFiltered(
-        IndexRequest request)
+    public async Task<(List<CreationModel>, int)> GetPagedSortedFiltered(int pageNumber,
+        int pageSize,
+        SortState sortOrder,
+        int? genreId = null,
+        string? title = null,
+        string? authorUsername = null,
+        DateTime? publishedBefore = null,
+        DateTime? publishedAfter = null,
+        int? limit = null)
     {
-        var (items, count) = await creationRepository.GetPagedSortedFiltered(request);
+        var (items, count) = await creationRepository.GetPagedSortedFiltered(pageNumber,
+            pageSize,
+            sortOrder,
+            genreId,
+            title,
+            authorUsername,
+            publishedBefore,
+            publishedAfter,
+            limit);
         var mappedItems = mapper.Map<List<CreationModel>>(items);
         return (mappedItems, count);
     }

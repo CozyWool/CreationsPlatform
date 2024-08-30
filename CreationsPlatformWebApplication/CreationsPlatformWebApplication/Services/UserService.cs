@@ -3,7 +3,6 @@ using AutoMapper;
 using CreationsPlatformWebApplication.DataAccess.Entities;
 using CreationsPlatformWebApplication.DataAccess.Repositories;
 using CreationsPlatformWebApplication.Helpers;
-using CreationsPlatformWebApplication.Models;
 using CreationsPlatformWebApplication.Models.Creation;
 using CreationsPlatformWebApplication.Models.Manage;
 using CreationsPlatformWebApplication.Models.User;

@@ -18,7 +18,7 @@ public class Startup(IConfiguration configuration)
         services.AddDbContext<ApplicationDbContext>(options =>
         {
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
-            options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+            // options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         });
 
         services.AddScoped<IUserRepository, UserRepository>();
