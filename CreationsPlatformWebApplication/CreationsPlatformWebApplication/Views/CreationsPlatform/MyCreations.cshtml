@@ -1,53 +1,114 @@
-@model List<CreationsPlatformWebApplication.Models.Creation.CreationModel>
+@model IndexViewModel
 
-<a asp-controller="CreationsPlatform" asp-action="Create" class="btn btn-lg w-100 btn-primary">
+<a asp-controller="CreationsPlatform" asp-action="Create" class="btn w-100 btn-primary mb-2">
     Опубликовать новое произведение
 </a>
+
+<form method="get" class="form-inline">
+    <div class="form-floating mb-2">
+        <input name="title" value="@Model.FilterViewModel.SelectedTitle" class="form-control"/>
+        <label>@Html.DisplayNameFor(m => m.FilterViewModel.SelectedTitle)</label>
+    </div>
+    <div class="form-floating mb-2">
+        <select name="genre" asp-items="Model.FilterViewModel.Genres" class="form-control"></select>
+        <label>@Html.DisplayNameFor(m => m.FilterViewModel.SelectedGenre)</label>
+    </div>
+    <div class="form-floating mb-2">
+        <input class="form-control" type="date" value="@Model.FilterViewModel.PublishedAfter" min="1800-01-01" max="2100-12-31" name="publishedAfter"/>
+        <label>@Html.DisplayNameFor(m => m.FilterViewModel.PublishedAfter)</label>
+    </div>
+    <div class="form-floating mb-2">
+        <input class="form-control" type="date" value="@Model.FilterViewModel.PublishedBefore" min="1800-01-01" max="2100-12-31" name="publishedBefore"/>
+        <label>@Html.DisplayNameFor(m => m.FilterViewModel.PublishedBefore)</label>
+    </div>
+    <div class="form-floating mb-2">
+        <input name="pageSize" value="@Model.PageViewModel.PageSize" class="form-control"/>
+        <label>@Html.DisplayNameFor(m => m.PageViewModel.PageSize)</label>
+    </div>
+
+    <input type="submit" value="Обновить" class="btn w-100 btn-outline-dark"/>
+</form>
+
 <table class="table table-sm table-hover table-bordered table-striped">
     <thead>
     <tr>
         <th>
-            <a>
-                @Html.DisplayNameFor(m => m.First().Id)
+            <a
+                class="no-text-decoration glyphicon @(Model.SortViewModel.IdSort == SortState.IdAsc ? "glyphicon-chevron-up" : "glyphicon-chevron-down")"
+                asp-action="MyCreations"
+                asp-route-pageSize="@(Model.PageViewModel.PageSize)"
+                asp-route-title="@(Model.FilterViewModel.SelectedTitle)"
+                asp-route-genre="@(Model.FilterViewModel.SelectedGenre)"
+                asp-route-authorUsername="@(Model.FilterViewModel.SelectedAuthorUsername)"
+                asp-route-sortorder="@(Model.SortViewModel.IdSort)">
+                <b>@Html.DisplayNameFor(m => m.Creations.First().Id)</b>
             </a>
         </th>
         <th>
-            <a>
-                @Html.DisplayNameFor(m => m.First().Title)
+            <a
+                class="no-text-decoration glyphicon @(Model.SortViewModel.TitleSort == SortState.TitleAsc ? "glyphicon-chevron-up" : "glyphicon-chevron-down")"
+                asp-action="MyCreations"
+                asp-route-pageSize="@(Model.PageViewModel.PageSize)"
+                asp-route-title="@(Model.FilterViewModel.SelectedTitle)"
+                asp-route-genre="@(Model.FilterViewModel.SelectedGenre)"
+                asp-route-authorUsername="@(Model.FilterViewModel.SelectedAuthorUsername)"
+                asp-route-sortorder="@(Model.SortViewModel.TitleSort)">
+                <b>@Html.DisplayNameFor(m => m.Creations.First().Title)</b>
             </a>
         </th>
         <th>
-            <a>
-                @Html.DisplayNameFor(m => m.First().Author)
+            <a
+                class="no-text-decoration glyphicon @(Model.SortViewModel.AuthorUsernameSort == SortState.AuthorUsernameAsc ? "glyphicon-chevron-up" : "glyphicon-chevron-down")"
+                asp-action="MyCreations"
+                asp-route-pageSize="@(Model.PageViewModel.PageSize)"
+                asp-route-title="@(Model.FilterViewModel.SelectedTitle)"
+                asp-route-genre="@(Model.FilterViewModel.SelectedGenre)"
+                asp-route-authorUsername="@(Model.FilterViewModel.SelectedAuthorUsername)"
+                asp-route-sortorder="@(Model.SortViewModel.AuthorUsernameSort)">
+                <b>@Html.DisplayNameFor(m => m.Creations.First().Author.Username)</b>
             </a>
         </th>
         <th>
-            <a>
-                @Html.DisplayNameFor(m => m.First().PublicationDate)
+            <a
+                class="no-text-decoration glyphicon @(Model.SortViewModel.PublicationDateSort == SortState.PublicationDateAsc ? "glyphicon-chevron-up" : "glyphicon-chevron-down")"
+                asp-action="MyCreations"
+                asp-route-pageSize="@(Model.PageViewModel.PageSize)"
+                asp-route-title="@(Model.FilterViewModel.SelectedTitle)"
+                asp-route-genre="@(Model.FilterViewModel.SelectedGenre)"
+                asp-route-authorUsername="@(Model.FilterViewModel.SelectedAuthorUsername)"
+                asp-route-sortorder="@(Model.SortViewModel.PublicationDateSort)">
+                <b>@Html.DisplayNameFor(m => m.Creations.First().PublicationDate)</b>
             </a>
         </th>
         <th>
-            <a>
-                @Html.DisplayNameFor(m => m.First().Rating)
+            <a
+                class="no-text-decoration glyphicon @(Model.SortViewModel.RatingSort == SortState.RatingAsc ? "glyphicon-chevron-up" : "glyphicon-chevron-down")"
+                asp-action="MyCreations"
+                asp-route-pageSize="@(Model.PageViewModel.PageSize)"
+                asp-route-title="@(Model.FilterViewModel.SelectedTitle)"
+                asp-route-genre="@(Model.FilterViewModel.SelectedGenre)"
+                asp-route-authorUsername="@(Model.FilterViewModel.SelectedAuthorUsername)"
+                asp-route-sortorder="@(Model.SortViewModel.RatingSort)">
+                <b>@Html.DisplayNameFor(m => m.Creations.First().Rating)</b>
             </a>
         </th>
-        <th class="text-center">Действия</th>
+        <th>Действия</th>
     </tr>
     </thead>
     <tbody>
-    @foreach (var creation in Model)
+    @foreach (var creation in Model.Creations)
     {
         <tr>
             <td>
                 @creation.Id
             </td>
             <td>
-                <a class="link" asp-controller="CreationsPlatform" asp-action="GetById" asp-route-id="@creation.Id">
+                <a class="link link-body-emphasis link-underline-dark link-underline-opacity-50 link-underline-opacity-100-hover" asp-controller="CreationsPlatform" asp-action="GetById" asp-route-id="@creation.Id">
                     &quot;@creation.Title&quot;
                 </a>
             </td>
             <td>@creation.Author.Username</td>
-            <td>@creation.PublicationDate</td>
+            <td>@creation.PublicationDate.ToShortDateString()</td>
             <td>@creation.Rating (@creation.RatingCount оценок)</td>
             <td class="m-auto text-center">
                 <a asp-controller="CreationsPlatform" asp-action="Edit" asp-route-id="@creation.Id" class="btn btn-sm btn-warning">
@@ -59,10 +120,51 @@
             </td>
         </tr>
     }
-
     </tbody>
 </table>
 
+@if (Model.PageViewModel.HasPreviousPage)
+{
+    <a asp-action="MyCreations"
+       asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
+       asp-route-pageSize="@(Model.PageViewModel.PageSize)"
+       asp-route-title="@(Model.FilterViewModel.SelectedTitle)"
+       asp-route-genre="@(Model.FilterViewModel.SelectedGenre)"
+       asp-route-authorUsername="@(Model.FilterViewModel.SelectedAuthorUsername)"
+       asp-route-sortorder="@(Model.SortViewModel.Current)"
+       class="btn btn-outline-dark">
+        <i class="glyphicon glyphicon-chevron-left"></i>
+        <b>@Html.DisplayNameFor(m => m.PageViewModel.HasPreviousPage)</b>
+    </a>
+}
+@if (Model.PageViewModel.HasNextPage)
+{
+    <a asp-action="MyCreations"
+       asp-route-page="@(Model.PageViewModel.PageNumber + 1)"
+       asp-route-pageSize="@(Model.PageViewModel.PageSize)"
+       asp-route-title="@(Model.FilterViewModel.SelectedTitle)"
+       asp-route-genre="@(Model.FilterViewModel.SelectedGenre)"
+       asp-route-authorUsername="@(Model.FilterViewModel.SelectedAuthorUsername)"
+       asp-route-sortOrder="@(Model.SortViewModel.Current)"
+       class="btn btn-outline-dark">
+        <b>@Html.DisplayNameFor(m => m.PageViewModel.HasNextPage)</b>
+        <i class="glyphicon glyphicon-chevron-right"></i>
+    </a>
+}
+
+@if (Model.PageViewModel.TotalPages != 0)
+{
+    <p class="d-inline">
+        @Html.DisplayNameFor(m => m.PageViewModel.PageNumber)
+        <b> @Model.PageViewModel.PageNumber</b> из <b> @Model.PageViewModel.TotalPages </b >
+    </p>
+}
+else
+{
+    <p class="d-inline">
+        <b>По вашему запросу ничего не найдено.</b>
+    </p>
+}
 <script type="text/javascript">
     document.getElementById("delete-btn").addEventListener("click", deleteItem);
     async function deleteItem(id) {
@@ -74,7 +176,7 @@
                 headers: { "Accept": "application/json", "Content-Type": "application/json" }
             });
             alert("Успешно удалено!")
-            window.location.href = '/';
+            window.location.href = '/CreationsPlatform/my-creations';
         } catch (error) {
             console.log(error);
             alert('Произошла ошибка при удалении/Нет доступа');
