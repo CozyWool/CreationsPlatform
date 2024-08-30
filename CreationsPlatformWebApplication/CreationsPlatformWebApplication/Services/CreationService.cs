@@ -1,6 +1,8 @@
 using AutoMapper;
+using CreationsPlatformWebApplication.Controllers;
 using CreationsPlatformWebApplication.DataAccess.Entities;
 using CreationsPlatformWebApplication.DataAccess.Repositories;
+using CreationsPlatformWebApplication.Messages;
 using CreationsPlatformWebApplication.Models;
 using CreationsPlatformWebApplication.Models.Creation;
 
@@ -37,6 +39,15 @@ public class CreationService(ICreationRepository creationRepository, IMapper map
     }
 
     public async Task<bool> Delete(int id) => await creationRepository.Delete(id);
+
     public async Task<List<CreationModel?>> GetUsersCreations(Guid userId) =>
         mapper.Map<List<CreationModel?>>(await creationRepository.GetUsersCreations(userId));
+
+    public async Task<(List<CreationModel>, int)> GetPagedSortedFiltered(
+        IndexRequest request)
+    {
+        var (items, count) = await creationRepository.GetPagedSortedFiltered(request);
+        var mappedItems = mapper.Map<List<CreationModel>>(items);
+        return (mappedItems, count);
+    }
 }

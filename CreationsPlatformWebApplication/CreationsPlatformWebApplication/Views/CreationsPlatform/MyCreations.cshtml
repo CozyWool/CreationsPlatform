@@ -7,19 +7,29 @@
     <thead>
     <tr>
         <th>
-            @Html.DisplayNameFor(m => m.First().Id)
+            <a>
+                @Html.DisplayNameFor(m => m.First().Id)
+            </a>
         </th>
         <th>
-            @Html.DisplayNameFor(m => m.First().Title)
+            <a>
+                @Html.DisplayNameFor(m => m.First().Title)
+            </a>
         </th>
         <th>
-            @Html.DisplayNameFor(m => m.First().Author)
+            <a>
+                @Html.DisplayNameFor(m => m.First().Author)
+            </a>
         </th>
         <th>
-            @Html.DisplayNameFor(m => m.First().PublicationDate)
+            <a>
+                @Html.DisplayNameFor(m => m.First().PublicationDate)
+            </a>
         </th>
         <th>
-            @Html.DisplayNameFor(m => m.First().Rating)
+            <a>
+                @Html.DisplayNameFor(m => m.First().Rating)
+            </a>
         </th>
         <th class="text-center">Действия</th>
     </tr>
@@ -57,11 +67,13 @@
     document.getElementById("delete-btn").addEventListener("click", deleteItem);
     async function deleteItem(id) {
         try  {
+            let confirmedDelete = confirm("Вы уверены, что хотите удалить это произведение?")
+            if (!confirmedDelete) return
             await fetch(`/CreationsPlatform/` + id, {
                 method: "DELETE",
                 headers: { "Accept": "application/json", "Content-Type": "application/json" }
             });
-            
+            alert("Успешно удалено!")
             window.location.href = '/';
         } catch (error) {
             console.log(error);

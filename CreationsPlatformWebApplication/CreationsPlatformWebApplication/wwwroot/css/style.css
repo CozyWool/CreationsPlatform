@@ -28,10 +28,20 @@
     content: "\f077";
 }
 
+.glyphicon-chevron-right:before {
+    content: "\f054";
+}
+.glyphicon-chevron-left:before {
+    content: "\f053";
+}
 .genre-select {
     max-width: 150px;
 }
 
 .genre-div {
     display: inline-block;
+}
+.no-text-decoration{
+    text-decoration: none;
+    color: FieldText;
 }
