@@ -25,23 +25,25 @@ public class CreationRepository(ApplicationDbContext dbContext) : ICreationRepos
     public async Task Create(CreationEntity entity)
     {
         entity.Author = null!;
-        
+
         await KostylSManyToMany(entity.Genres);
-        
+
         if (entity.Id <= 0)
         {
             entity.Id = dbContext.Creations.OrderBy(e => e.Id).Last().Id + 1;
         }
-        entity.PublicationDate = DateTime.SpecifyKind(entity.PublicationDate, DateTimeKind.Utc);    
-        
-        
+
+        entity.PublicationDate = DateTime.SpecifyKind(entity.PublicationDate, DateTimeKind.Utc);
+
+
         dbContext.Creations.Add(entity);
         await dbContext.SaveChangesAsync();
     }
+
     public async Task Update(CreationEntity entity)
     {
         await KostylSManyToMany(entity.Genres);
-        
+
         dbContext.Update(entity);
         await dbContext.SaveChangesAsync();
     }
@@ -60,6 +62,7 @@ public class CreationRepository(ApplicationDbContext dbContext) : ICreationRepos
             }
         }
     }
+
     public async Task<bool> Delete(int id)
     {
         var entity = await GetById(id);
@@ -70,4 +73,6 @@ public class CreationRepository(ApplicationDbContext dbContext) : ICreationRepos
         return true;
     }
 
+    public async Task<List<CreationEntity?>> GetUsersCreations(Guid userId) =>
+        await dbContext.Creations.Where(entity => entity.AuthorId == userId).ToListAsync();
 }

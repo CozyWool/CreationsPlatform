@@ -22,9 +22,12 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="CreationsPlatform" asp-action="Index">Главная</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="CreationsPlatform" asp-action="Create">Мои произведения</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="CreationsPlatform" asp-action="MyCreations">Мои произведения</a>
                         </li>
-                        @* TODO: Добавить побольше кнопок действий(Личный кабинет, мои произведения и т.д*@
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Profile">Мой профиль</a>
+                        </li>
+                        @* TODO: Добавить побольше кнопок действий(Топ 50)*@
                     </ul>
 
                     @if (User.Identity is {IsAuthenticated: true})

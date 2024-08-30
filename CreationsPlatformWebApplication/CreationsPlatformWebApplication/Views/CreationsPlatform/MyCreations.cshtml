@@ -1,6 +1,8 @@
-@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model List<CreationModel>
 
+<a asp-controller="CreationsPlatform" asp-action="Create" class="btn btn-lg w-100 btn-primary">
+    Опубликовать новое произведение
+</a>
 <table class="table table-sm table-hover table-bordered table-striped">
     <thead>
     <tr>
@@ -19,6 +21,7 @@
         <th>
             @Html.DisplayNameFor(m => m.First().Rating)
         </th>
+        <th class="text-center">Действия</th>
     </tr>
     </thead>
     <tbody>
@@ -36,8 +39,17 @@
             <td>@creation.Author.Username</td>
             <td>@creation.PublicationDate</td>
             <td>@creation.Rating (@creation.RatingCount оценок)</td>
+            <td class="m-auto text-center">
+                <a asp-controller="CreationsPlatform" asp-action="Edit" asp-route-id="@creation.Id" class="btn btn-sm btn-warning">
+                    Изменить
+                </a>
+                <a id="delete-btn" class="btn btn-sm btn-danger" onclick="deleteItem(@creation.Id)">
+                    Удалить
+                </a>
+            </td>
         </tr>
     }
+
     </tbody>
 </table>
 

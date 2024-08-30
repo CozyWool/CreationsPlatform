@@ -24,11 +24,20 @@ public class CreationsPlatformController : Controller
 
     [AllowAnonymous]
     [Route("/")]
-    [HttpGet("Index")]
+    [HttpGet("index")]
     public async Task<IActionResult> Index()
     {
         var viewModel = await _creationService.GetAll();
         ViewData["Title"] = "Писательская платформа";
+
+        return View(viewModel);
+    }
+    [HttpGet("my-creations")]
+    public async Task<IActionResult> MyCreations()
+    {
+        var userId = Guid.Parse(User.Claims.FirstOrDefault(claim => claim.Type == "UserId").Value);
+        var viewModel = await _creationService.GetUsersCreations(userId);
+        ViewData["Title"] = "Мои произведения";
 
         return View(viewModel);
     }

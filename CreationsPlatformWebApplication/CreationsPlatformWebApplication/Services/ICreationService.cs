@@ -10,4 +10,5 @@ public interface ICreationService
     Task Create(CreationModel model);
     Task Update(CreationModel model);
     Task<bool> Delete(int id);
+    Task<List<CreationModel?>> GetUsersCreations(Guid userId);
 }
