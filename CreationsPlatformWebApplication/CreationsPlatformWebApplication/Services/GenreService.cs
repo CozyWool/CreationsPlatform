@@ -1,6 +1,5 @@
 using AutoMapper;
 using CreationsPlatformWebApplication.DataAccess.Repositories;
-using CreationsPlatformWebApplication.Models;
 using CreationsPlatformWebApplication.Models.Creation;
 
 namespace CreationsPlatformWebApplication.Services;

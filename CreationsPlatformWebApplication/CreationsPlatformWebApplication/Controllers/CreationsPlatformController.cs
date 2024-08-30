@@ -1,6 +1,7 @@
 ﻿using CreationsPlatformWebApplication.Messages;
 using CreationsPlatformWebApplication.Models.Creation;
 using CreationsPlatformWebApplication.Models.FilterSortPaging;
+using CreationsPlatformWebApplication.Models.ViewModels;
 using CreationsPlatformWebApplication.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,16 +25,22 @@ public class CreationsPlatformController : Controller
         _genreService = genreService;
     }
 
-   
 
     [AllowAnonymous]
     [Route("/")]
     [HttpGet("index")]
     public async Task<IActionResult> Index(IndexRequest request)
     {
-        var (items, count) = await _creationService.GetPagedSortedFiltered(request);
+        var (items, count) = await _creationService.GetPagedSortedFiltered(pageNumber: request.PageNumber,
+            pageSize: request.PageSize,
+            sortOrder: request.SortOrder,
+            genreId: request.GenreId,
+            title: request.Title,
+            authorUsername: request.AuthorUsername,
+            publishedBefore: request.PublishedBefore,
+            publishedAfter: request.PublishedAfter);
         ViewData["Title"] = "Писательская платформа";
-        var viewModel = new IndexViewModel()
+        var viewModel = new IndexViewModel
         {
             PageViewModel = new PageViewModel(count, request.PageNumber, request.PageSize),
             SortViewModel = new SortViewModel(request.SortOrder),
@@ -44,11 +51,46 @@ public class CreationsPlatformController : Controller
         return View(viewModel);
     }
 
-    [HttpGet("my-creations")]
-    public async Task<IActionResult> MyCreations()
+    [HttpGet("top-50")]
+    public async Task<IActionResult> Top50(Top50Request request)
     {
-        var userId = Guid.Parse(User.Claims.FirstOrDefault(claim => claim.Type == "UserId").Value);
-        var viewModel = await _creationService.GetUsersCreations(userId);
+        var (items, count) =
+            await _creationService.GetPagedSortedFiltered(pageNumber: request.PageNumber,
+                pageSize: request.PageSize,
+                sortOrder: request.SortOrder,
+                authorUsername: request.AuthorUsername,
+                limit: 50);
+        var viewModel = new Top50ViewModel
+        {
+            PageViewModel = new PageViewModel(count, request.PageNumber, request.PageSize),
+            SortViewModel = new SortViewModel(request.SortOrder),
+            Creations = items
+        };
+        ViewData["Title"] = "Топ-50 произведений";
+        return View("Top50", viewModel);
+    }
+
+    [HttpGet("my-creations")]
+    public async Task<IActionResult> MyCreations(MyCreationsRequest request)
+    {
+        var username = User.Identity.Name;
+        var (items, count) = await _creationService.GetPagedSortedFiltered(pageNumber: request.PageNumber,
+            pageSize: request.PageSize,
+            sortOrder: request.SortOrder,
+            genreId: request.GenreId,
+            authorUsername: username,
+            title: request.Title,
+            publishedBefore: request.PublishedBefore,
+            publishedAfter: request.PublishedAfter);
+        ViewData["Title"] = "Писательская платформа";
+        var viewModel = new IndexViewModel
+        {
+            PageViewModel = new PageViewModel(count, request.PageNumber, request.PageSize),
+            SortViewModel = new SortViewModel(request.SortOrder),
+            FilterViewModel = new FilterViewModel(_genres, request.GenreId, request.Title, request.AuthorUsername,
+                request.PublishedAfter, request.PublishedBefore),
+            Creations = items
+        };
         ViewData["Title"] = "Мои произведения";
 
         return View(viewModel);
@@ -127,7 +169,7 @@ public class CreationsPlatformController : Controller
                     .DistinctBy(e => e.Id)
                     .ToList());
         await _creationService.Update(creationModel);
-        return RedirectToAction(nameof(Index));
+        return RedirectToAction(nameof(MyCreations));
     }
 
     [HttpPost("add-genre")]
@@ -182,7 +224,7 @@ public class CreationsPlatformController : Controller
             return RedirectToAction("AccessDenied", "Account");
         if (await _creationService.Delete(id))
         {
-            return Ok();
+            return RedirectToAction(nameof(MyCreations));
         }
 
         return BadRequest();
