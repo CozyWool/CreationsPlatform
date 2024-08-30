@@ -36,4 +36,6 @@ public class CreationService(ICreationRepository creationRepository, IMapper map
     }
 
     public async Task<bool> Delete(int id) => await creationRepository.Delete(id);
+    public async Task<List<CreationModel?>> GetUsersCreations(Guid userId) =>
+        mapper.Map<List<CreationModel?>>(await creationRepository.GetUsersCreations(userId));
 }

@@ -10,4 +10,5 @@ public interface ICreationRepository
     Task Create(CreationEntity entity);
     Task Update(CreationEntity entity);
     Task<bool> Delete(int id);
+    Task<List<CreationEntity?>> GetUsersCreations(Guid userId);
 }
