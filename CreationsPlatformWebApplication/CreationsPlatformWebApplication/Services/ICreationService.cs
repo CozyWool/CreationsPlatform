@@ -1,6 +1,4 @@
-using CreationsPlatformWebApplication.Controllers;
-using CreationsPlatformWebApplication.Messages;
-using CreationsPlatformWebApplication.Models;
+using CreationsPlatformWebApplication.Enums;
 using CreationsPlatformWebApplication.Models.Creation;
 
 namespace CreationsPlatformWebApplication.Services;
@@ -14,5 +12,14 @@ public interface ICreationService
     Task Update(CreationModel model);
     Task<bool> Delete(int id);
     Task<List<CreationModel?>> GetUsersCreations(Guid userId);
-    Task<(List<CreationModel>, int)> GetPagedSortedFiltered(IndexRequest request);
+
+    Task<(List<CreationModel>, int)> GetPagedSortedFiltered(int pageNumber,
+        int pageSize,
+        SortState sortOrder,
+        int? genreId = null,
+        string? title = null,
+        string? authorUsername = null,
+        DateTime? publishedBefore = null,
+        DateTime? publishedAfter = null,
+        int? limit = null);
 }

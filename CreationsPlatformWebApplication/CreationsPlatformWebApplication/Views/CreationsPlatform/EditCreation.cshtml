@@ -1,4 +1,4 @@
-@model CreationsPlatformWebApplication.Models.Creation.CreationViewModel
+@model CreationViewModel
 
 <div class="row w-100 m-auto">
     <div class="col-md-12 align-content-center">
@@ -28,7 +28,8 @@
                         <select asp-for="Creation.Genres[i].Id" class="form-control genre-select genre-div" asp-items="@(new SelectList(Model.Genres, "Id", "Name"))"></select>
                         @*  TODO:Разобраться с кнопкой удаления жанра при изменении произведения  *@
                         @* (Не рабоатет из-за того, что при удалении жанра из таблицы-связки не удаляется связь) *@
-                        @* <button type="submit" class="btn btn-sm btn-danger mb-2 genre-div" asp-action="RemoveGenre" asp-route-index="@i" asp-route-isEdit="true">Удалить жанр</button> *@
+
+                        <button type="submit" class="btn btn-sm btn-danger mb-2 genre-div" asp-action="RemoveGenre" asp-route-index="@i" asp-route-isEdit="true">Удалить жанр</button>
                     </div>
                 }
             </div>

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CreationsPlatformWebApplication.Messages;
 
-public class IndexRequest
+public class MyCreationsRequest
 {
     [BindProperty(Name = "genre")] public int? GenreId { get; set; }
     [BindProperty(Name = "title")] public string Title { get; set; }

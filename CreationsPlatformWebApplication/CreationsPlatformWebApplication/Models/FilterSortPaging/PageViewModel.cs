@@ -17,5 +17,5 @@ public class PageViewModel
 
     [Display(Name = "Назад")] public bool HasPreviousPage => PageNumber > 1;
     [Display(Name = "Вперед")] public bool HasNextPage => PageNumber < TotalPages;
-    [Display(Name = "Размер страницы")] public int PageSize { get; set; } = 10;
+    [Display(Name = "Размер страницы")] public int PageSize { get; set; }
 }
