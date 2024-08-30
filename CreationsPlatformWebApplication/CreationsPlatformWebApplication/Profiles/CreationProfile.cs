@@ -3,6 +3,7 @@ using AutoMapper;
 using AutoMapper.Internal;
 using CreationsPlatformWebApplication.DataAccess.Entities;
 using CreationsPlatformWebApplication.Models;
+using CreationsPlatformWebApplication.Models.Creation;
 using CreationsPlatformWebApplication.Services;
 
 namespace CreationsPlatformWebApplication.Profiles;

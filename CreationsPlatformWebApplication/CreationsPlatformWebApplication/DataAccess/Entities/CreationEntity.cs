@@ -1,6 +1,4 @@
-﻿using CreationsPlatformWebApplication.Enums;
-
-namespace CreationsPlatformWebApplication.DataAccess.Entities;
+﻿namespace CreationsPlatformWebApplication.DataAccess.Entities;
 
 public class CreationEntity
 {

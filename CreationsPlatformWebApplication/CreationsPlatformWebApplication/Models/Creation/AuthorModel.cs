@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace CreationsPlatformWebApplication.Models;
+namespace CreationsPlatformWebApplication.Models.Creation;
 
 public class AuthorModel
 {
