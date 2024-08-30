@@ -1,4 +1,5 @@
 using CreationsPlatformWebApplication.DataAccess.Entities;
+using CreationsPlatformWebApplication.Messages;
 
 namespace CreationsPlatformWebApplication.DataAccess.Repositories;
 
@@ -11,4 +12,5 @@ public interface ICreationRepository
     Task Update(CreationEntity entity);
     Task<bool> Delete(int id);
     Task<List<CreationEntity?>> GetUsersCreations(Guid userId);
+    Task<(List<CreationEntity> items, int count)> GetPagedSortedFiltered(IndexRequest request);
 }

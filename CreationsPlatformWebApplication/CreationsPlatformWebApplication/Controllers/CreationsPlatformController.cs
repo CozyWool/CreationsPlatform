@@ -1,5 +1,6 @@
-﻿using CreationsPlatformWebApplication.Models;
+﻿using CreationsPlatformWebApplication.Messages;
 using CreationsPlatformWebApplication.Models.Creation;
+using CreationsPlatformWebApplication.Models.FilterSortPaging;
 using CreationsPlatformWebApplication.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,16 +24,26 @@ public class CreationsPlatformController : Controller
         _genreService = genreService;
     }
 
+   
+
     [AllowAnonymous]
     [Route("/")]
     [HttpGet("index")]
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(IndexRequest request)
     {
-        var viewModel = await _creationService.GetAll();
+        var (items, count) = await _creationService.GetPagedSortedFiltered(request);
         ViewData["Title"] = "Писательская платформа";
-
+        var viewModel = new IndexViewModel()
+        {
+            PageViewModel = new PageViewModel(count, request.PageNumber, request.PageSize),
+            SortViewModel = new SortViewModel(request.SortOrder),
+            FilterViewModel = new FilterViewModel(_genres, request.GenreId, request.Title, request.AuthorUsername,
+                request.PublishedAfter, request.PublishedBefore),
+            Creations = items
+        };
         return View(viewModel);
     }
+
     [HttpGet("my-creations")]
     public async Task<IActionResult> MyCreations()
     {
