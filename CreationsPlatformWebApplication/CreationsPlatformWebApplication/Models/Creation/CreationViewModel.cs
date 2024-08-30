@@ -1,4 +1,4 @@
-namespace CreationsPlatformWebApplication.Models;
+namespace CreationsPlatformWebApplication.Models.Creation;
 
 public class CreationViewModel
 {

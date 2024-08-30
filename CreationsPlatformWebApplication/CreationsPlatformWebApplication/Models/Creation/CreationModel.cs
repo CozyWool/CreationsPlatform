@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
-using CreationsPlatformWebApplication.Enums;
 
-namespace CreationsPlatformWebApplication.Models;
+namespace CreationsPlatformWebApplication.Models.Creation;
 
 public class CreationModel
 {

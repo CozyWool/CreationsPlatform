@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace CreationsPlatformWebApplication.Models;
+namespace CreationsPlatformWebApplication.Models.User;
 
 public class RegisterModel
 {

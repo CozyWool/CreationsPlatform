@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace LibraryWebApplication.Views;
+namespace CreationsPlatformWebApplication.Views;
 
 public class _ViewStart : PageModel
 {

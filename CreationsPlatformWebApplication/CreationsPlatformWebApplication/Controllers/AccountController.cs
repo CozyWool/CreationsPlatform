@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using CreationsPlatformWebApplication.Models;
 using CreationsPlatformWebApplication.Models.Manage;
+using CreationsPlatformWebApplication.Models.User;
 using CreationsPlatformWebApplication.Services;
 using CreationsPlatformWebApplication.Services.Enums;
 using Microsoft.AspNetCore.Authorization;
