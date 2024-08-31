@@ -1,10 +1,10 @@
 ﻿using System.Globalization;
 using System.Security.Claims;
+using CreationsPlatformWebApplication.Enums;
 using CreationsPlatformWebApplication.Models;
 using CreationsPlatformWebApplication.Models.Manage;
 using CreationsPlatformWebApplication.Models.User;
 using CreationsPlatformWebApplication.Services;
-using CreationsPlatformWebApplication.Services.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

@@ -24,17 +24,17 @@ namespace CreationsPlatformWebApplication.DataAccess.Migrations
 
             modelBuilder.Entity("CreationEntityGenreEntity", b =>
                 {
-                    b.Property<int>("CreationsId")
+                    b.Property<int>("CreationEntityId")
                         .HasColumnType("integer");
 
                     b.Property<int>("GenresId")
                         .HasColumnType("integer");
 
-                    b.HasKey("CreationsId", "GenresId");
+                    b.HasKey("CreationEntityId", "GenresId");
 
                     b.HasIndex("GenresId");
 
-                    b.ToTable("CreationEntityGenreEntity", (string)null);
+                    b.ToTable("CreationEntityGenreEntity");
                 });
 
             modelBuilder.Entity("CreationsPlatformWebApplication.DataAccess.Entities.CommentEntity", b =>
@@ -55,6 +55,10 @@ namespace CreationsPlatformWebApplication.DataAccess.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("creation_id");
 
+                    b.Property<DateTime>("PublicationDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("publication_date");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid")
                         .HasColumnName("user_id");
@@ -66,7 +70,7 @@ namespace CreationsPlatformWebApplication.DataAccess.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Comments", (string)null);
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("CreationsPlatformWebApplication.DataAccess.Entities.CreationEntity", b =>
@@ -81,6 +85,12 @@ namespace CreationsPlatformWebApplication.DataAccess.Migrations
                     b.Property<Guid>("AuthorId")
                         .HasColumnType("uuid")
                         .HasColumnName("author_id");
+
+                    b.Property<int>("CommentCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0)
+                        .HasColumnName("comment_count");
 
                     b.Property<string>("Content")
                         .IsRequired()
@@ -113,7 +123,7 @@ namespace CreationsPlatformWebApplication.DataAccess.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("Creations", (string)null);
+                    b.ToTable("Creations");
                 });
 
             modelBuilder.Entity("CreationsPlatformWebApplication.DataAccess.Entities.GenreEntity", b =>
@@ -134,7 +144,7 @@ namespace CreationsPlatformWebApplication.DataAccess.Migrations
                     b.HasKey("Id")
                         .HasName("Genres_pkey");
 
-                    b.ToTable("Genres", (string)null);
+                    b.ToTable("Genres");
                 });
 
             modelBuilder.Entity("CreationsPlatformWebApplication.DataAccess.Entities.UserEntity", b =>
@@ -173,14 +183,14 @@ namespace CreationsPlatformWebApplication.DataAccess.Migrations
                     b.HasKey("Id")
                         .HasName("Users_pkey");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("CreationEntityGenreEntity", b =>
                 {
                     b.HasOne("CreationsPlatformWebApplication.DataAccess.Entities.CreationEntity", null)
                         .WithMany()
-                        .HasForeignKey("CreationsId")
+                        .HasForeignKey("CreationEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -193,27 +203,23 @@ namespace CreationsPlatformWebApplication.DataAccess.Migrations
 
             modelBuilder.Entity("CreationsPlatformWebApplication.DataAccess.Entities.CommentEntity", b =>
                 {
-                    b.HasOne("CreationsPlatformWebApplication.DataAccess.Entities.CreationEntity", "CreationEntity")
+                    b.HasOne("CreationsPlatformWebApplication.DataAccess.Entities.CreationEntity", null)
                         .WithMany("Comments")
                         .HasForeignKey("CreationId")
-                        .IsRequired()
-                        .HasConstraintName("creation_id_fk");
+                        .IsRequired();
 
-                    b.HasOne("CreationsPlatformWebApplication.DataAccess.Entities.UserEntity", "UserEntity")
-                        .WithMany("Comments")
+                    b.HasOne("CreationsPlatformWebApplication.DataAccess.Entities.UserEntity", "User")
+                        .WithMany()
                         .HasForeignKey("UserId")
-                        .IsRequired()
-                        .HasConstraintName("user_id_fk");
+                        .IsRequired();
 
-                    b.Navigation("CreationEntity");
-
-                    b.Navigation("UserEntity");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("CreationsPlatformWebApplication.DataAccess.Entities.CreationEntity", b =>
                 {
                     b.HasOne("CreationsPlatformWebApplication.DataAccess.Entities.UserEntity", "Author")
-                        .WithMany("Creations")
+                        .WithMany()
                         .HasForeignKey("AuthorId")
                         .IsRequired()
                         .HasConstraintName("author_id_fk");
@@ -224,13 +230,6 @@ namespace CreationsPlatformWebApplication.DataAccess.Migrations
             modelBuilder.Entity("CreationsPlatformWebApplication.DataAccess.Entities.CreationEntity", b =>
                 {
                     b.Navigation("Comments");
-                });
-
-            modelBuilder.Entity("CreationsPlatformWebApplication.DataAccess.Entities.UserEntity", b =>
-                {
-                    b.Navigation("Comments");
-
-                    b.Navigation("Creations");
                 });
 #pragma warning restore 612, 618
         }

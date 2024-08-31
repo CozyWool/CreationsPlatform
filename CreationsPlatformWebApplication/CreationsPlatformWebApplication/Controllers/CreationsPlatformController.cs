@@ -8,21 +8,23 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CreationsPlatformWebApplication.Controllers;
 
-[Route("{controller}")]
+[Route("[controller]")]
 [Authorize]
 public class CreationsPlatformController : Controller
 {
     private readonly ICreationService _creationService;
     private readonly IUserService _userService;
     private readonly IGenreService _genreService;
-    private List<GenreModel> _genres => _genreService.GetGenres().Result;
+    private readonly ICommentService _commentService;
+    private List<GenreModel> Genres => _genreService.GetGenres().Result;
 
     public CreationsPlatformController(ICreationService creationService, IUserService userService,
-        IGenreService genreService)
+        IGenreService genreService, ICommentService commentService)
     {
         _creationService = creationService;
         _userService = userService;
         _genreService = genreService;
+        _commentService = commentService;
     }
 
 
@@ -44,7 +46,7 @@ public class CreationsPlatformController : Controller
         {
             PageViewModel = new PageViewModel(count, request.PageNumber, request.PageSize),
             SortViewModel = new SortViewModel(request.SortOrder),
-            FilterViewModel = new FilterViewModel(_genres, request.GenreId, request.Title, request.AuthorUsername,
+            FilterViewModel = new FilterViewModel(Genres, request.GenreId, request.Title, request.AuthorUsername,
                 request.PublishedAfter, request.PublishedBefore),
             Creations = items
         };
@@ -87,7 +89,7 @@ public class CreationsPlatformController : Controller
         {
             PageViewModel = new PageViewModel(count, request.PageNumber, request.PageSize),
             SortViewModel = new SortViewModel(request.SortOrder),
-            FilterViewModel = new FilterViewModel(_genres, request.GenreId, request.Title, request.AuthorUsername,
+            FilterViewModel = new FilterViewModel(Genres, request.GenreId, request.Title, request.AuthorUsername,
                 request.PublishedAfter, request.PublishedBefore),
             Creations = items
         };
@@ -97,16 +99,46 @@ public class CreationsPlatformController : Controller
     }
 
     [HttpGet("id/{id:int}")]
-    public async Task<IActionResult> GetById([FromRoute] int id)
+    public async Task<IActionResult> GetById(int id)
     {
         var creationModel = await _creationService.GetById(id);
         if (creationModel == null)
             throw new ArgumentException();
         // return NotFound(id);
 
+        var viewModel = new DetailedCreationViewModel
+        {
+            Creation = creationModel,
+            Comment = new CommentModel()
+        };
         ViewData["Title"] = creationModel.Title;
+        return View("DetailedCreation", viewModel);
+    }
 
-        return View("DetailedCreation", creationModel);
+    [HttpPost("add-comment")]
+    public async Task<IActionResult> AddComment(CommentModel comment)
+    {
+        ViewData["Title"] = comment.CreationTitle;
+        comment.UserId = Guid.Parse(User.Claims.FirstOrDefault(claim => claim.Type == "UserId").Value);
+        await _commentService.Create(comment);
+        return Redirect($"id/{comment.CreationId}");
+    }
+
+    [HttpDelete("delete-comment")]
+    public async Task<IActionResult> AddComment(int commentId, int creationId)
+    {
+        if ((await _commentService.GetById(commentId)).UserId.ToString() !=
+            User.Claims.FirstOrDefault(claim => claim.Type == "UserId").Value)
+        {
+            return RedirectToAction("AccessDenied", "Account");
+        }
+
+        if (await _commentService.Delete(commentId))
+        {
+            return Redirect($"id/{creationId}");
+        }
+
+        return BadRequest();
     }
 
     [HttpGet("create")]
@@ -115,7 +147,7 @@ public class CreationsPlatformController : Controller
         var creationViewModel = new CreationViewModel
         {
             Creation = new CreationModel(),
-            Genres = _genres
+            Genres = Genres
         };
         ViewData["Title"] = "Публикация произведения";
         return View("CreateCreation", creationViewModel);
@@ -128,13 +160,12 @@ public class CreationsPlatformController : Controller
             await _userService
                 .GetAuthorById
                     (Guid.Parse(User.Claims.FirstOrDefault(claim => claim.Type == "UserId").Value));
-        creationModel.PublicationDate = DateTime.Now;
-        creationModel.Genres = await _genreService
-            .FillNameField(
-                creationModel
-                    .Genres
-                    .DistinctBy(e => e.Id)
-                    .ToList());
+        creationModel.PublicationDate = DateTime.UtcNow;
+        creationModel.Genres =
+            creationModel
+                .Genres
+                .DistinctBy(e => e.Id)
+                .ToList();
         await _creationService.Create(creationModel);
         return RedirectToAction(nameof(Index));
     }
@@ -150,7 +181,7 @@ public class CreationsPlatformController : Controller
         var creationViewModel = new CreationViewModel
         {
             Creation = creationModel,
-            Genres = _genres
+            Genres = Genres
         };
         ViewData["Title"] = $"Изменение {creationModel.Title}";
         return View("EditCreation", creationViewModel);
@@ -162,12 +193,11 @@ public class CreationsPlatformController : Controller
         if (creationModel.Author.Id.ToString() != User.Claims.FirstOrDefault(claim => claim.Type == "UserId").Value)
             return RedirectToAction("AccessDenied", "Account");
 
-        creationModel.Genres = await _genreService
-            .FillNameField(
-                creationModel
-                    .Genres
-                    .DistinctBy(e => e.Id)
-                    .ToList());
+        creationModel.Genres =
+            creationModel
+                .Genres
+                .DistinctBy(e => e.Id)
+                .ToList();
         await _creationService.Update(creationModel);
         return RedirectToAction(nameof(MyCreations));
     }
@@ -183,7 +213,7 @@ public class CreationsPlatformController : Controller
         var creationViewModel = new CreationViewModel
         {
             Creation = creationModel,
-            Genres = _genres
+            Genres = Genres
         };
 
         ViewData["Title"] = "Публикация произведения";
@@ -201,7 +231,7 @@ public class CreationsPlatformController : Controller
             creationViewModel = new CreationViewModel
             {
                 Creation = creationModel,
-                Genres = _genres
+                Genres = Genres
             };
             return View(isEdit ? "EditCreation" : "CreateCreation", creationViewModel);
         }
@@ -210,7 +240,7 @@ public class CreationsPlatformController : Controller
         creationViewModel = new CreationViewModel
         {
             Creation = creationModel,
-            Genres = _genres
+            Genres = Genres
         };
 
         return View(isEdit ? "EditCreation" : "CreateCreation", creationViewModel);

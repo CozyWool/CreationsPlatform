@@ -18,7 +18,6 @@ public class Startup(IConfiguration configuration)
         services.AddDbContext<ApplicationDbContext>(options =>
         {
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
-            // options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         });
 
         services.AddScoped<IUserRepository, UserRepository>();
@@ -29,6 +28,9 @@ public class Startup(IConfiguration configuration)
 
         services.AddScoped<IGenreRepository, GenreRepository>();
         services.AddScoped<IGenreService, GenreService>();
+        
+        services.AddScoped<ICommentRepository, CommentRepository>();
+        services.AddScoped<ICommentService, CommentService>();
 
         services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(options =>
@@ -38,11 +40,7 @@ public class Startup(IConfiguration configuration)
                 options.AccessDeniedPath = new PathString(CookieAuthenticationDefaults.AccessDeniedPath);
                 options.Cookie.HttpOnly = true;
             });
-        services.AddOptions<MvcOptions>()
-            .Configure<ILoggerFactory>((options, loggerFactory) =>
-            {
-                // options.ModelBinderProviders.Insert(0, new CustomCreationModelBinderProvider(loggerFactory));
-            });
+       
         services.AddMvc();
     }
 

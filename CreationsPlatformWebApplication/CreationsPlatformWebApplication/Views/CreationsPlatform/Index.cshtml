@@ -34,7 +34,7 @@
     <tr>
         <th>
             <a
-                class="no-text-decoration glyphicon @(Model.SortViewModel.IdSort == SortState.IdAsc ? "glyphicon-chevron-up" : "glyphicon-chevron-down")"
+                class="no-text-decoration glyphicon @(Model.SortViewModel.IdSort == SortState.IdAsc ? "glyphicon-chevron-down" : "glyphicon-chevron-up")"
                 asp-action="Index"
                 asp-route-pageSize="@(Model.PageViewModel.PageSize)"
                 asp-route-title="@(Model.FilterViewModel.SelectedTitle)"
@@ -46,7 +46,7 @@
         </th>
         <th>
             <a
-                class="no-text-decoration glyphicon @(Model.SortViewModel.TitleSort == SortState.TitleAsc ? "glyphicon-chevron-up" : "glyphicon-chevron-down")"
+                class="no-text-decoration glyphicon @(Model.SortViewModel.TitleSort == SortState.TitleAsc ? "glyphicon-chevron-down" : "glyphicon-chevron-up")"
                 asp-action="Index"
                 asp-route-pageSize="@(Model.PageViewModel.PageSize)"
                 asp-route-title="@(Model.FilterViewModel.SelectedTitle)"
@@ -58,7 +58,7 @@
         </th>
         <th>
             <a
-                class="no-text-decoration glyphicon @(Model.SortViewModel.AuthorUsernameSort == SortState.AuthorUsernameAsc ? "glyphicon-chevron-up" : "glyphicon-chevron-down")"
+                class="no-text-decoration glyphicon @(Model.SortViewModel.AuthorUsernameSort == SortState.AuthorUsernameAsc ? "glyphicon-chevron-down" : "glyphicon-chevron-up")"
                 asp-action="Index"
                 asp-route-pageSize="@(Model.PageViewModel.PageSize)"
                 asp-route-title="@(Model.FilterViewModel.SelectedTitle)"
@@ -70,7 +70,7 @@
         </th>
         <th>
             <a
-                class="no-text-decoration glyphicon @(Model.SortViewModel.PublicationDateSort == SortState.PublicationDateAsc ? "glyphicon-chevron-up" : "glyphicon-chevron-down")"
+                class="no-text-decoration glyphicon @(Model.SortViewModel.PublicationDateSort == SortState.PublicationDateAsc ? "glyphicon-chevron-down" : "glyphicon-chevron-up")"
                 asp-action="Index"
                 asp-route-pageSize="@(Model.PageViewModel.PageSize)"
                 asp-route-title="@(Model.FilterViewModel.SelectedTitle)"
@@ -82,7 +82,7 @@
         </th>
         <th>
             <a
-                class="no-text-decoration glyphicon @(Model.SortViewModel.RatingSort == SortState.RatingAsc ? "glyphicon-chevron-up" : "glyphicon-chevron-down")"
+                class="no-text-decoration glyphicon @(Model.SortViewModel.RatingSort == SortState.RatingAsc ? "glyphicon-chevron-down" : "glyphicon-chevron-up")"
                 asp-action="Index"
                 asp-route-pageSize="@(Model.PageViewModel.PageSize)"
                 asp-route-title="@(Model.FilterViewModel.SelectedTitle)"
@@ -90,6 +90,18 @@
                 asp-route-authorUsername="@(Model.FilterViewModel.SelectedAuthorUsername)"
                 asp-route-sortorder="@(Model.SortViewModel.RatingSort)">
                 <b>@Html.DisplayNameFor(m => m.Creations.First().Rating)</b>
+            </a>
+        </th>
+        <th>
+            <a
+                class="no-text-decoration glyphicon @(Model.SortViewModel.CommentSort == SortState.CommentAsc ? "glyphicon-chevron-down" : "glyphicon-chevron-up")"
+                asp-action="Index"
+                asp-route-pageSize="@(Model.PageViewModel.PageSize)"
+                asp-route-title="@(Model.FilterViewModel.SelectedTitle)"
+                asp-route-genre="@(Model.FilterViewModel.SelectedGenre)"
+                asp-route-authorUsername="@(Model.FilterViewModel.SelectedAuthorUsername)"
+                asp-route-sortorder="@(Model.SortViewModel.CommentSort)">
+                <b>@Html.DisplayNameFor(m => m.Creations.First().CommentCount)</b>
             </a>
         </th>
     </tr>
@@ -109,6 +121,7 @@
             <td>@creation.Author.Username</td>
             <td>@creation.PublicationDate.ToShortDateString()</td>
             <td>@creation.Rating (@creation.RatingCount оценок)</td>
+            <td>@creation.CommentCount</td>
         </tr>
     }
     </tbody>

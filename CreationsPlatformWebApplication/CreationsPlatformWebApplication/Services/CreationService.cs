@@ -8,11 +8,11 @@ namespace CreationsPlatformWebApplication.Services;
 
 public class CreationService(ICreationRepository creationRepository, IMapper mapper) : ICreationService
 {
-    public async Task<List<CreationModel?>> GetAll() =>
-        mapper.Map<List<CreationModel?>>(await creationRepository.GetAll());
+    public async Task<List<CreationModel>> GetAll() =>
+        mapper.Map<List<CreationModel>>(await creationRepository.GetAll());
 
-    public async Task<CreationModel?> GetById(int id) =>
-        mapper.Map<CreationModel?>(await creationRepository.GetById(id));
+    public async Task<CreationModel> GetById(int id) =>
+        mapper.Map<CreationModel>(await creationRepository.GetById(id));
 
 
     public async Task<List<CreationModel?>> GetByAuthorId(Guid id) =>
@@ -38,8 +38,8 @@ public class CreationService(ICreationRepository creationRepository, IMapper map
 
     public async Task<bool> Delete(int id) => await creationRepository.Delete(id);
 
-    public async Task<List<CreationModel?>> GetUsersCreations(Guid userId) =>
-        mapper.Map<List<CreationModel?>>(await creationRepository.GetUsersCreations(userId));
+    public async Task<List<CreationModel>> GetUsersCreations(Guid userId) =>
+        mapper.Map<List<CreationModel>>(await creationRepository.GetUsersCreations(userId));
 
     public async Task<(List<CreationModel>, int)> GetPagedSortedFiltered(int pageNumber,
         int pageSize,
