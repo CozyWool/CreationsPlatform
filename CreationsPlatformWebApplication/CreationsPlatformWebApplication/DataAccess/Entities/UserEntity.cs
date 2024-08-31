@@ -13,8 +13,4 @@ public class UserEntity
     public DateTime CreatedDate { get; set; }
 
     public bool IsDeleted { get; set; }
-
-    public virtual ICollection<CommentEntity> Comments { get; set; } = new List<CommentEntity>();
-
-    public virtual ICollection<CreationEntity> Creations { get; set; } = new List<CreationEntity>();
 }

@@ -2,11 +2,11 @@ using System.Security.Claims;
 using AutoMapper;
 using CreationsPlatformWebApplication.DataAccess.Entities;
 using CreationsPlatformWebApplication.DataAccess.Repositories;
+using CreationsPlatformWebApplication.Enums;
 using CreationsPlatformWebApplication.Helpers;
 using CreationsPlatformWebApplication.Models.Creation;
 using CreationsPlatformWebApplication.Models.Manage;
 using CreationsPlatformWebApplication.Models.User;
-using CreationsPlatformWebApplication.Services.Enums;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 

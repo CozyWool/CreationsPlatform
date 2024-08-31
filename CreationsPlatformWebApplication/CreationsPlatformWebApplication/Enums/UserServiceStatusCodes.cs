@@ -1,4 +1,4 @@
-namespace CreationsPlatformWebApplication.Services.Enums;
+namespace CreationsPlatformWebApplication.Enums;
 
 public enum UserServiceStatusCodes
 {

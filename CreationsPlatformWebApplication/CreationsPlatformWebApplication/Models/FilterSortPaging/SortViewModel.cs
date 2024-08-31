@@ -9,6 +9,7 @@ public class SortViewModel
     public SortState AuthorUsernameSort { get; private set; }
     public SortState PublicationDateSort { get; private set; }
     public SortState RatingSort { get; private set; }
+    public SortState CommentSort { get; private set; }
     public SortState Current { get; private set; }
 
     public SortViewModel(SortState sortOrder)
@@ -22,6 +23,7 @@ public class SortViewModel
             ? SortState.PublicationDateDesc
             : SortState.PublicationDateAsc;
         RatingSort = sortOrder == SortState.RatingAsc ? SortState.RatingDesc : SortState.RatingAsc;
+        CommentSort = sortOrder == SortState.CommentAsc ? SortState.CommentDesc : SortState.CommentAsc;
         Current = sortOrder;
     }
 }

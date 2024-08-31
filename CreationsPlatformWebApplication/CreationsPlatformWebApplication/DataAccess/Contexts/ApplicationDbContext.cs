@@ -16,7 +16,7 @@ public class ApplicationDbContext : DbContext
     public virtual DbSet<CommentEntity> Comments { get; set; }
     public virtual DbSet<CreationEntity> Creations { get; set; }
     public virtual DbSet<GenreEntity> Genres { get; set; }
-    public virtual DbSet<UserEntity?> Users { get; set; }
+    public virtual DbSet<UserEntity> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -27,17 +27,14 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Content).HasColumnName("content");
             entity.Property(e => e.CreationId).HasColumnName("creation_id");
+            entity.Property(e => e.PublicationDate).HasColumnName("publication_date");
             entity.Property(e => e.UserId).HasColumnName("user_id");
 
-            entity.HasOne(d => d.CreationEntity).WithMany(p => p.Comments)
-                .HasForeignKey(d => d.CreationId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("creation_id_fk");
-
-            entity.HasOne(d => d.UserEntity).WithMany(p => p.Comments)
+            entity.HasOne(d => d.User)
+                .WithMany()
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("user_id_fk");
+                .IsRequired();
         });
 
         modelBuilder.Entity<CreationEntity>(entity =>
@@ -57,14 +54,24 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.RatingCount)
                 .HasDefaultValue(0)
                 .HasColumnName("rating_count");
+            entity.Property(e => e.CommentCount)
+                .HasDefaultValue(0)
+                .HasColumnName("comment_count");
 
-            entity.HasOne(d => d.Author).WithMany(p => p.Creations)
+            entity.HasOne(d => d.Author)
+                .WithMany()
                 .HasForeignKey(d => d.AuthorId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("author_id_fk");
 
             entity.HasMany(d => d.Genres)
-                .WithMany(p => p.Creations);
+                .WithMany();
+
+            entity.HasMany(d => d.Comments)
+                .WithOne()
+                .HasForeignKey(d => d.CreationId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .IsRequired();
         });
 
         modelBuilder.Entity<UserEntity>(entity =>
