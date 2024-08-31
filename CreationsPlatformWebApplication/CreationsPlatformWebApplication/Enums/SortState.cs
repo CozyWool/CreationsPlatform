@@ -11,5 +11,7 @@ public enum SortState
     PublicationDateAsc, 
     PublicationDateDesc,   
     RatingAsc, 
-    RatingDesc 
+    RatingDesc,
+    CommentAsc, 
+    CommentDesc 
 }

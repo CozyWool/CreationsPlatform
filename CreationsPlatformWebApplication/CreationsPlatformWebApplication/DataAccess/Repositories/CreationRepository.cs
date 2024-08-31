@@ -5,20 +5,28 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CreationsPlatformWebApplication.DataAccess.Repositories;
 
-public class CreationRepository(ApplicationDbContext dbContext) : ICreationRepository
+public class CreationRepository(ApplicationDbContext applicationDbContext) : ICreationRepository
 {
-    public async Task<List<CreationEntity?>> GetAll() =>
-        await dbContext.Creations.ToListAsync();
-
-    public async Task<CreationEntity?> GetById(int id) =>
-        await dbContext
+    public async Task<List<CreationEntity>> GetAll() =>
+        await applicationDbContext
             .Creations
             .Include(entity => entity.Genres)
-            .FirstOrDefaultAsync(x => x.Id == id);
+            .Include(entity => entity.Comments)
+            .ToListAsync();
 
-    public async Task<List<CreationEntity?>> GetByAuthorId(Guid id) =>
-        await dbContext
+    public async Task<CreationEntity?> GetById(int id) => await applicationDbContext
+        .Creations
+        .Include(entity => entity.Genres)
+        .Include(entity => entity.Comments)
+        .AsSplitQuery()
+        .FirstOrDefaultAsync(x => x.Id == id);
+
+
+    public async Task<List<CreationEntity>> GetByAuthorId(Guid id) =>
+        await applicationDbContext
             .Creations
+            .Include(entity => entity.Genres)
+            .Include(entity => entity.Comments)
             .Where(x => x.AuthorId == id)
             .ToListAsync();
 
@@ -30,21 +38,24 @@ public class CreationRepository(ApplicationDbContext dbContext) : ICreationRepos
         var existingGenres = new List<GenreEntity>();
         foreach (var genre in entity.Genres)
         {
-            existingGenres.AddRange(dbContext.Genres.Where(e => e.Id == genre.Id));
+            existingGenres.AddRange(applicationDbContext.Genres.Where(e => e.Id == genre.Id));
         }
 
         entity.Genres = new List<GenreEntity>(existingGenres);
 
         if (entity.Id <= 0)
         {
-            entity.Id = dbContext.Creations.OrderBy(e => e.Id).Last().Id + 1;
+            if (await applicationDbContext.Creations.AnyAsync())
+                entity.Id = applicationDbContext.Creations.OrderBy(e => e.Id).Last().Id + 1;
+            else
+                entity.Id = 0;
         }
 
         entity.PublicationDate = DateTime.SpecifyKind(entity.PublicationDate, DateTimeKind.Utc);
 
 
-        dbContext.Creations.Add(entity);
-        await dbContext.SaveChangesAsync();
+        applicationDbContext.Creations.Add(entity);
+        await applicationDbContext.SaveChangesAsync();
     }
 
     public async Task Update(CreationEntity entity)
@@ -52,28 +63,13 @@ public class CreationRepository(ApplicationDbContext dbContext) : ICreationRepos
         var existingGenres = new List<GenreEntity>();
         foreach (var genre in entity.Genres)
         {
-            existingGenres.AddRange(dbContext.Genres.Where(e => e.Id == genre.Id));
+            existingGenres.AddRange(applicationDbContext.Genres.Where(e => e.Id == genre.Id));
         }
 
         entity.Genres = new List<GenreEntity>(existingGenres);
 
-        dbContext.Update(entity);
-        await dbContext.SaveChangesAsync();
-    }
-
-    //TODO: надо че-то делать с ним
-    //TODO: 4 часа убил, все никак не понял как правильно инсертить Many-to-Many сущности, если уже есть запись в таблице
-    //TODO: edit не работает с этим костылём ***
-    private async Task KostylSManyToMany(ICollection<GenreEntity> list)
-    {
-        // foreach (var genre in list)
-        // {
-        //     var genreInDb = await dbContext.Genres.FindAsync(genre.Id);
-        //     if (genreInDb != null)
-        //     {
-        //         dbContext.Genres.Remove(genreInDb);
-        //     }
-        // }
+        applicationDbContext.Update(entity);
+        await applicationDbContext.SaveChangesAsync();
     }
 
     public async Task<bool> Delete(int id)
@@ -81,13 +77,13 @@ public class CreationRepository(ApplicationDbContext dbContext) : ICreationRepos
         var entity = await GetById(id);
         if (entity == null) return false;
 
-        dbContext.Creations.Remove(entity);
-        await dbContext.SaveChangesAsync();
+        applicationDbContext.Creations.Remove(entity);
+        await applicationDbContext.SaveChangesAsync();
         return true;
     }
 
-    public async Task<List<CreationEntity?>> GetUsersCreations(Guid userId) =>
-        await dbContext.Creations.Where(entity => entity.AuthorId == userId).ToListAsync();
+    public async Task<List<CreationEntity>> GetUsersCreations(Guid userId) =>
+        await applicationDbContext.Creations.Where(entity => entity.AuthorId == userId).ToListAsync();
 
     public async Task<(List<CreationEntity> items, int count)> GetPagedSortedFiltered(int pageNumber,
         int pageSize,
@@ -96,13 +92,14 @@ public class CreationRepository(ApplicationDbContext dbContext) : ICreationRepos
         string? title = null,
         string? authorUsername = null,
         DateTime? publishedBefore = null,
-        DateTime? publishedAfter = null, 
+        DateTime? publishedAfter = null,
         int? limit = null)
     {
         //фильтрация
-        var creations = dbContext
+        var creations = applicationDbContext
             .Creations
             .Include(x => x.Genres)
+            .Include(x => x.Comments)
             .AsQueryable();
 
         if (genreId != null && genreId != -1)
@@ -149,10 +146,12 @@ public class CreationRepository(ApplicationDbContext dbContext) : ICreationRepos
             SortState.PublicationDateDesc => creations.OrderByDescending(e => e.PublicationDate),
             SortState.RatingAsc => creations.OrderBy(e => e.Rating),
             SortState.RatingDesc => creations.OrderByDescending(e => e.Rating),
+            SortState.CommentAsc => creations.OrderBy(e => e.CommentCount),
+            SortState.CommentDesc => creations.OrderByDescending(e => e.CommentCount),
             _ => creations.OrderBy(e => e.Id)
         };
-        
-        
+
+
         // пагинация
         var count = await creations.CountAsync();
         if (limit != null)
@@ -163,6 +162,7 @@ public class CreationRepository(ApplicationDbContext dbContext) : ICreationRepos
                 count = limit.Value;
             }
         }
+
         var items = await creations
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
