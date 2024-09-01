@@ -11,6 +11,7 @@ public class ApplicationDbContext : DbContext
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
+        Database.EnsureCreated();
     }
 
     public virtual DbSet<CommentEntity> Comments { get; set; }
@@ -155,6 +156,18 @@ public class ApplicationDbContext : DbContext
                 Id = 10,
                 Name = "Научная фантастика",
             },
+        ]);
+
+        modelBuilder.Entity<UserEntity>().HasData([
+            new UserEntity
+            {
+                Id = Guid.Parse("79f6317d-ace3-4c24-8f06-f9f2061ddb61"),
+                Username = "admin",
+                Email = "admin@gmail.com",
+                PasswordHash = "RDLwV07fbBOW5nxXhYuAjacXX4TdWTlOsjxh5CQnYtU=",
+                CreatedDate = DateTime.UtcNow,
+                IsDeleted = false
+            }
         ]);
     }
 }
