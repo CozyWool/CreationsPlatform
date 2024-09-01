@@ -43,7 +43,7 @@ public class AccountController(IUserService userService) : Controller
                 ModelState.AddModelError("", "Неверный пароль или логин");
                 break;
         }
-
+        ViewData["Title"] = "Вход";
         return View(model);
     }
 
@@ -75,12 +75,14 @@ public class AccountController(IUserService userService) : Controller
                 ModelState.AddModelError("", "Пользователь уже существует");
                 break;
         }
-
+        ViewData["Title"] = "Регистрация";
         return View(model);
     }
 
     public async Task<IActionResult> Logout()
     {
+        ViewData["Title"] = "Выход из аккаунта";
+        
         if (await userService.Logout())
             return RedirectToAction("Login", "Account");
         return RedirectToAction("Index", "CreationsPlatform");
