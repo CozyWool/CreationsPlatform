@@ -126,7 +126,7 @@ public class CreationsPlatformController(
 
         comment.UserId = Guid.Parse(User.Claims.FirstOrDefault(claim => claim.Type == "UserId").Value);
         await commentService.Create(comment);
-        return Redirect($"{nameof(Details).ToLower()}/{comment.CreationId}");
+        return Redirect($"{nameof(Details).ToLower()}?id={comment.CreationId}");
     }
 
     [HttpDelete("delete-comment")]
