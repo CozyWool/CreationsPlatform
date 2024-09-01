@@ -22,7 +22,7 @@ public class CreationModel
     [Required(ErrorMessage = "Произведение не может быть пустым")]
     public string Content { get; set; }
 
-    [Display(Name = "Оценка")] public int Rating { get; set; }
+    [Display(Name = "Оценка")] public int TotalRating { get; set; }
     [Display(Name = "Кол-во оценок")] public int RatingCount { get; set; }
 
 

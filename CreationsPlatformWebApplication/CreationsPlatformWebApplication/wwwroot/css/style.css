@@ -35,7 +35,8 @@
     content: "\f053";
 }
 .genre-select {
-    max-width: 150px;
+    max-width: 500px;
+    width: 100%;
 }
 
 .genre-div {

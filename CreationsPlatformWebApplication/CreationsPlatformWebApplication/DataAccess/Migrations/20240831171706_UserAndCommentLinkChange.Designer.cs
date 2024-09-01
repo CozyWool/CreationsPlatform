@@ -3,6 +3,7 @@ using System;
 using CreationsPlatformWebApplication.DataAccess.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CreationsPlatformWebApplication.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class CreationsPlatformDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240831171706_UserAndCommentLinkChange")]
+    partial class UserAndCommentLinkChange
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -55,14 +58,6 @@ namespace CreationsPlatformWebApplication.DataAccess.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("creation_id");
 
-                    b.Property<DateTime>("PublicationDate")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("publication_date");
-
-                    b.Property<int>("Rating")
-                        .HasColumnType("integer")
-                        .HasColumnName("rating");
-
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid")
                         .HasColumnName("user_id");
@@ -71,8 +66,6 @@ namespace CreationsPlatformWebApplication.DataAccess.Migrations
                         .HasName("Comments_pkey");
 
                     b.HasIndex("CreationId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Comments");
                 });
@@ -105,6 +98,12 @@ namespace CreationsPlatformWebApplication.DataAccess.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("publication_date");
 
+                    b.Property<int>("Rating")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0)
+                        .HasColumnName("rating");
+
                     b.Property<int>("RatingCount")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
@@ -115,12 +114,6 @@ namespace CreationsPlatformWebApplication.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("title");
-
-                    b.Property<int>("TotalRating")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(0)
-                        .HasColumnName("total_rating");
 
                     b.HasKey("Id")
                         .HasName("Creations_pkey");
@@ -207,17 +200,13 @@ namespace CreationsPlatformWebApplication.DataAccess.Migrations
 
             modelBuilder.Entity("CreationsPlatformWebApplication.DataAccess.Entities.CommentEntity", b =>
                 {
-                    b.HasOne("CreationsPlatformWebApplication.DataAccess.Entities.CreationEntity", null)
+                    b.HasOne("CreationsPlatformWebApplication.DataAccess.Entities.CreationEntity", "CreationEntity")
                         .WithMany("Comments")
                         .HasForeignKey("CreationId")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("creation_id_fk");
 
-                    b.HasOne("CreationsPlatformWebApplication.DataAccess.Entities.UserEntity", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .IsRequired();
-
-                    b.Navigation("User");
+                    b.Navigation("CreationEntity");
                 });
 
             modelBuilder.Entity("CreationsPlatformWebApplication.DataAccess.Entities.CreationEntity", b =>

@@ -65,6 +65,18 @@
     </main>
 </div>
 <script src="~/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () =>{
+        onFormInput('ratingBefore', 'ratingBeforeValue');
+        onFormInput('ratingAfter', 'ratingAfterValue');
+    })
+    function onFormInput(ratingId, ratingValueId){
+        let ratingValue = document.getElementById(ratingValueId);
+        let rating = document.getElementById(ratingId);
+        ratingValue.value = rating.valueAsNumber;
+        ratingValue.style.marginLeft = Math.floor(rating.clientWidth * (rating.value / rating.max))+'px';
+    }
+</script>
 </body>
 </html>
 

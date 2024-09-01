@@ -5,6 +5,7 @@
         <form asp-action="Edit" asp-controller="CreationsPlatform" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
             <input asp-for="Creation.Author.Id" hidden value="@Model.Creation.Author.Id">
+            <input name="Creation.PublicationDate" type="date" hidden value="@Model.Creation.PublicationDate.ToString("yyyy-MM-dd")">
             <div class="form-floating mb-2">
                 <input type="text" class="form-control" asp-for="Creation.Id" readonly>
                 <label asp-for="Creation.Id">@Html.DisplayNameFor(m => m.Creation.Id)</label>
@@ -19,22 +20,19 @@
                 <label asp-for="Creation.Title">@Html.DisplayNameFor(m => m.Creation.Title)</label>
                 <span asp-validation-for="Creation.Title" class="text-danger"></span>
             </div>
-            
+
             <div class="form-floating mb-2">
                 <button type="submit" class="btn btn-sm btn-primary mb-2" asp-action="AddGenre" asp-route-isEdit="true">Добавить жанр</button>
                 @for (var i = 0; i < Model.Creation.Genres.Count; i++)
                 {
-                    <div >
-                        <select asp-for="Creation.Genres[i].Id" class="form-control genre-select genre-div" asp-items="@(new SelectList(Model.Genres, "Id", "Name"))"></select>
-                        @*  TODO:Разобраться с кнопкой удаления жанра при изменении произведения  *@
-                        @* (Не рабоатет из-за того, что при удалении жанра из таблицы-связки не удаляется связь) *@
-
+                    <div>
+                        <select asp-items="@(new SelectList(Model.Genres, "Id", "Name"))" asp-for="Creation.Genres[i].Id" class="form-control genre-select genre-div"></select>
                         <button type="submit" class="btn btn-sm btn-danger mb-2 genre-div" asp-action="RemoveGenre" asp-route-index="@i" asp-route-isEdit="true">Удалить жанр</button>
                     </div>
                 }
             </div>
             <div class="form-floating mb-2">
-                <textarea class="form-control m-auto w-100" rows="37" asp-for="Creation.Content"></textarea>
+                <textarea class="form-control m-auto w-100" style="height: 300px" asp-for="Creation.Content"></textarea>
                 <label asp-for="Creation.Content">@Html.DisplayNameFor(m => m.Creation.Content)</label>
                 <span asp-validation-for="Creation.Content" class="text-danger"></span>
             </div>
