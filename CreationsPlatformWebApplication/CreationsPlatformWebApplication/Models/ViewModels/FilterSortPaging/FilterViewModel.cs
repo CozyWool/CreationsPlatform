@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using CreationsPlatformWebApplication.Models.Creation;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace CreationsPlatformWebApplication.Models.FilterSortPaging;
+namespace CreationsPlatformWebApplication.Models.ViewModels.FilterSortPaging;
 
 public class FilterViewModel
 {

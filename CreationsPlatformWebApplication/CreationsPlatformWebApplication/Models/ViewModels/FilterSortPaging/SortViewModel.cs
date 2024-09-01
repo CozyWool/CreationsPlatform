@@ -1,6 +1,6 @@
 using CreationsPlatformWebApplication.Enums;
 
-namespace CreationsPlatformWebApplication.Models.FilterSortPaging;
+namespace CreationsPlatformWebApplication.Models.ViewModels.FilterSortPaging;
 
 public class SortViewModel(SortState sortOrder)
 {

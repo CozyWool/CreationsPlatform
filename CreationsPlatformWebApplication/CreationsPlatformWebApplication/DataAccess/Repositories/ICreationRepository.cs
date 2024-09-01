@@ -25,4 +25,6 @@ public interface ICreationRepository
         int? ratingBefore = null,
         int? ratingAfter = null,
         int? limit = null);
+
+    Task<(CreationEntity entity, int count)> GetByIdPaged(int id, int pageNumber, int pageSize);
 }
