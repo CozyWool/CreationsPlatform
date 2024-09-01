@@ -40,14 +40,16 @@ public class CreationsPlatformController : Controller
             title: request.Title,
             authorUsername: request.AuthorUsername,
             publishedBefore: request.PublishedBefore,
-            publishedAfter: request.PublishedAfter);
+            publishedAfter: request.PublishedAfter,
+            ratingBefore: request.RatingBefore,
+            ratingAfter: request.RatingAfter);
         ViewData["Title"] = "Писательская платформа";
         var viewModel = new IndexViewModel
         {
             PageViewModel = new PageViewModel(count, request.PageNumber, request.PageSize),
             SortViewModel = new SortViewModel(request.SortOrder),
             FilterViewModel = new FilterViewModel(Genres, request.GenreId, request.Title, request.AuthorUsername,
-                request.PublishedAfter, request.PublishedBefore),
+                request.PublishedAfter, request.PublishedBefore, request.RatingBefore, request.RatingAfter),
             Creations = items
         };
         return View(viewModel);
@@ -81,16 +83,19 @@ public class CreationsPlatformController : Controller
             sortOrder: request.SortOrder,
             genreId: request.GenreId,
             authorUsername: username,
+            isAuthorUsernameStrict: true,
             title: request.Title,
             publishedBefore: request.PublishedBefore,
-            publishedAfter: request.PublishedAfter);
+            publishedAfter: request.PublishedAfter,
+            ratingBefore: request.RatingBefore,
+            ratingAfter: request.RatingAfter);
         ViewData["Title"] = "Писательская платформа";
         var viewModel = new IndexViewModel
         {
             PageViewModel = new PageViewModel(count, request.PageNumber, request.PageSize),
             SortViewModel = new SortViewModel(request.SortOrder),
-            FilterViewModel = new FilterViewModel(Genres, request.GenreId, request.Title, request.AuthorUsername,
-                request.PublishedAfter, request.PublishedBefore),
+            FilterViewModel = new FilterViewModel(Genres, request.GenreId, request.Title, username,
+                request.PublishedAfter, request.PublishedBefore, request.RatingBefore, request.RatingAfter),
             Creations = items
         };
         ViewData["Title"] = "Мои произведения";
@@ -125,7 +130,7 @@ public class CreationsPlatformController : Controller
     }
 
     [HttpDelete("delete-comment")]
-    public async Task<IActionResult> AddComment(int commentId, int creationId)
+    public async Task<IActionResult> DeleteComment(int commentId, int creationId)
     {
         if ((await _commentService.GetById(commentId)).UserId.ToString() !=
             User.Claims.FirstOrDefault(claim => claim.Type == "UserId").Value)
@@ -147,7 +152,7 @@ public class CreationsPlatformController : Controller
         var creationViewModel = new CreationViewModel
         {
             Creation = new CreationModel(),
-            Genres = Genres
+            Genres = Genres,
         };
         ViewData["Title"] = "Публикация произведения";
         return View("CreateCreation", creationViewModel);
@@ -181,7 +186,7 @@ public class CreationsPlatformController : Controller
         var creationViewModel = new CreationViewModel
         {
             Creation = creationModel,
-            Genres = Genres
+            Genres = Genres,
         };
         ViewData["Title"] = $"Изменение {creationModel.Title}";
         return View("EditCreation", creationViewModel);
@@ -205,23 +210,24 @@ public class CreationsPlatformController : Controller
     [HttpPost("add-genre")]
     public IActionResult AddGenre([FromForm(Name = "Creation")] CreationModel creationModel, [FromQuery] bool isEdit)
     {
+        var creationViewModel = new CreationViewModel
+        {
+            Genres = Genres,
+            Creation = creationModel
+        };
+
         creationModel.Genres.Add(new GenreModel
         {
             Id = -1,
             Name = "Выберите жанр"
         });
-        var creationViewModel = new CreationViewModel
-        {
-            Creation = creationModel,
-            Genres = Genres
-        };
-
         ViewData["Title"] = "Публикация произведения";
         return View(isEdit ? "EditCreation" : "CreateCreation", creationViewModel);
     }
 
     [HttpPost("remove-genre/{index:int}")]
-    public IActionResult RemoveGenre(int index, [FromForm(Name = "Creation")] CreationModel creationModel,
+    public IActionResult RemoveGenre(int index,
+        [FromForm(Name = "Creation")] CreationModel creationModel,
         [FromQuery] bool isEdit)
     {
         ViewData["Title"] = "Публикация произведения";
@@ -236,13 +242,13 @@ public class CreationsPlatformController : Controller
             return View(isEdit ? "EditCreation" : "CreateCreation", creationViewModel);
         }
 
+
         creationModel.Genres.RemoveAt(index);
         creationViewModel = new CreationViewModel
         {
-            Creation = creationModel,
-            Genres = Genres
+            Genres = Genres,
+            Creation = creationModel
         };
-
         return View(isEdit ? "EditCreation" : "CreateCreation", creationViewModel);
     }
 

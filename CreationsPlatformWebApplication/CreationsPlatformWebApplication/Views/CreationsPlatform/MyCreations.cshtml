@@ -4,7 +4,7 @@
     Опубликовать новое произведение
 </a>
 
-<form method="get" class="form-inline">
+<form method="get" class="form-inline" oninput="onFormInput('ratingBefore', 'ratingBeforeValue'); onFormInput('ratingAfter', 'ratingAfterValue');">
     <div class="form-floating mb-2">
         <input name="title" value="@Model.FilterViewModel.SelectedTitle" class="form-control"/>
         <label>@Html.DisplayNameFor(m => m.FilterViewModel.SelectedTitle)</label>
@@ -14,12 +14,26 @@
         <label>@Html.DisplayNameFor(m => m.FilterViewModel.SelectedGenre)</label>
     </div>
     <div class="form-floating mb-2">
-        <input class="form-control" type="date" value="@Model.FilterViewModel.PublishedAfter" min="1800-01-01" max="2100-12-31" name="publishedAfter"/>
+        <input class="form-control" type="date" value="@(Model.FilterViewModel.PublishedAfter.HasValue ? Model.FilterViewModel.PublishedAfter.Value.ToString("yyyy-MM-dd") : "")" min="1800-01-01" max="2100-12-31" name="publishedAfter"/>
         <label>@Html.DisplayNameFor(m => m.FilterViewModel.PublishedAfter)</label>
     </div>
     <div class="form-floating mb-2">
-        <input class="form-control" type="date" value="@Model.FilterViewModel.PublishedBefore" min="1800-01-01" max="2100-12-31" name="publishedBefore"/>
+        <input class="form-control" type="date" value="@(Model.FilterViewModel.PublishedBefore.HasValue ? Model.FilterViewModel.PublishedBefore.Value.ToString("yyyy-MM-dd") : "")" min="1800-01-01" max="2100-12-31" name="publishedBefore"/>
         <label>@Html.DisplayNameFor(m => m.FilterViewModel.PublishedBefore)</label>
+    </div>
+    <div class="mb-2 mt-2">
+        <label>@Html.DisplayNameFor(m => m.FilterViewModel.RatingAfter)</label>
+        <br/>
+        <output id="ratingAfterValue" name="ratingAfterValue" for="ratingAfter">@Model.FilterViewModel.RatingAfter</output>
+        <br/>
+        <input class="form-range" name="ratingAfter" id="ratingAfter" type="range" step="1" max="100" value="@Model.FilterViewModel.RatingAfter">
+    </div>
+    <div class="mb-2 mt-2">
+        <label>@Html.DisplayNameFor(m => m.FilterViewModel.RatingBefore)</label>
+        <br/>
+        <output id="ratingBeforeValue" name="ratingBeforeValue" for="ratingBefore">@Model.FilterViewModel.RatingBefore</output>
+        <br/>
+        <input class="form-range" name="ratingBefore" id="ratingBefore" type="range" step="1" max="100" value="@Model.FilterViewModel.RatingBefore">
     </div>
     <div class="form-floating mb-2">
         <input name="pageSize" value="@Model.PageViewModel.PageSize" class="form-control"/>
@@ -34,62 +48,98 @@
     <tr>
         <th>
             <a
-                class="no-text-decoration glyphicon @(Model.SortViewModel.IdSort == SortState.IdAsc ? "glyphicon-chevron-up" : "glyphicon-chevron-down")"
+                class="no-text-decoration glyphicon @(Model.SortViewModel.IdSort == SortState.IdAsc ? "glyphicon-chevron-down" : "glyphicon-chevron-up")"
                 asp-action="MyCreations"
                 asp-route-pageSize="@(Model.PageViewModel.PageSize)"
                 asp-route-title="@(Model.FilterViewModel.SelectedTitle)"
                 asp-route-genre="@(Model.FilterViewModel.SelectedGenre)"
                 asp-route-authorUsername="@(Model.FilterViewModel.SelectedAuthorUsername)"
+                asp-route-publishedBefore="@(Model.FilterViewModel.PublishedBefore.HasValue ? Model.FilterViewModel.PublishedBefore.Value.ToString("yyyy-MM-dd") : "")"
+                asp-route-publishedAfter="@(Model.FilterViewModel.PublishedAfter.HasValue ? Model.FilterViewModel.PublishedAfter.Value.ToString("yyyy-MM-dd") : "")"
+                asp-route-ratingBefore="@Model.FilterViewModel.RatingBefore"
+                asp-route-ratingAfter="@Model.FilterViewModel.RatingAfter"
                 asp-route-sortorder="@(Model.SortViewModel.IdSort)">
                 <b>@Html.DisplayNameFor(m => m.Creations.First().Id)</b>
             </a>
         </th>
         <th>
             <a
-                class="no-text-decoration glyphicon @(Model.SortViewModel.TitleSort == SortState.TitleAsc ? "glyphicon-chevron-up" : "glyphicon-chevron-down")"
+                class="no-text-decoration glyphicon @(Model.SortViewModel.TitleSort == SortState.TitleAsc ? "glyphicon-chevron-down" : "glyphicon-chevron-up")"
                 asp-action="MyCreations"
                 asp-route-pageSize="@(Model.PageViewModel.PageSize)"
                 asp-route-title="@(Model.FilterViewModel.SelectedTitle)"
                 asp-route-genre="@(Model.FilterViewModel.SelectedGenre)"
                 asp-route-authorUsername="@(Model.FilterViewModel.SelectedAuthorUsername)"
+                asp-route-publishedBefore="@(Model.FilterViewModel.PublishedBefore.HasValue ? Model.FilterViewModel.PublishedBefore.Value.ToString("yyyy-MM-dd") : "")"
+                asp-route-publishedAfter="@(Model.FilterViewModel.PublishedAfter.HasValue ? Model.FilterViewModel.PublishedAfter.Value.ToString("yyyy-MM-dd") : "")"
+                asp-route-ratingBefore="@Model.FilterViewModel.RatingBefore"
+                asp-route-ratingAfter="@Model.FilterViewModel.RatingAfter"
                 asp-route-sortorder="@(Model.SortViewModel.TitleSort)">
                 <b>@Html.DisplayNameFor(m => m.Creations.First().Title)</b>
             </a>
         </th>
         <th>
             <a
-                class="no-text-decoration glyphicon @(Model.SortViewModel.AuthorUsernameSort == SortState.AuthorUsernameAsc ? "glyphicon-chevron-up" : "glyphicon-chevron-down")"
+                class="no-text-decoration glyphicon @(Model.SortViewModel.AuthorUsernameSort == SortState.AuthorUsernameAsc ? "glyphicon-chevron-down" : "glyphicon-chevron-up")"
                 asp-action="MyCreations"
                 asp-route-pageSize="@(Model.PageViewModel.PageSize)"
                 asp-route-title="@(Model.FilterViewModel.SelectedTitle)"
                 asp-route-genre="@(Model.FilterViewModel.SelectedGenre)"
                 asp-route-authorUsername="@(Model.FilterViewModel.SelectedAuthorUsername)"
+                asp-route-publishedBefore="@(Model.FilterViewModel.PublishedBefore.HasValue ? Model.FilterViewModel.PublishedBefore.Value.ToString("yyyy-MM-dd") : "")"
+                asp-route-publishedAfter="@(Model.FilterViewModel.PublishedAfter.HasValue ? Model.FilterViewModel.PublishedAfter.Value.ToString("yyyy-MM-dd") : "")"
+                asp-route-ratingBefore="@Model.FilterViewModel.RatingBefore"
+                asp-route-ratingAfter="@Model.FilterViewModel.RatingAfter"
                 asp-route-sortorder="@(Model.SortViewModel.AuthorUsernameSort)">
                 <b>@Html.DisplayNameFor(m => m.Creations.First().Author.Username)</b>
             </a>
         </th>
         <th>
             <a
-                class="no-text-decoration glyphicon @(Model.SortViewModel.PublicationDateSort == SortState.PublicationDateAsc ? "glyphicon-chevron-up" : "glyphicon-chevron-down")"
+                class="no-text-decoration glyphicon @(Model.SortViewModel.PublicationDateSort == SortState.PublicationDateAsc ? "glyphicon-chevron-down" : "glyphicon-chevron-up")"
                 asp-action="MyCreations"
                 asp-route-pageSize="@(Model.PageViewModel.PageSize)"
                 asp-route-title="@(Model.FilterViewModel.SelectedTitle)"
                 asp-route-genre="@(Model.FilterViewModel.SelectedGenre)"
                 asp-route-authorUsername="@(Model.FilterViewModel.SelectedAuthorUsername)"
+                asp-route-publishedBefore="@(Model.FilterViewModel.PublishedBefore.HasValue ? Model.FilterViewModel.PublishedBefore.Value.ToString("yyyy-MM-dd") : "")"
+                asp-route-publishedAfter="@(Model.FilterViewModel.PublishedAfter.HasValue ? Model.FilterViewModel.PublishedAfter.Value.ToString("yyyy-MM-dd") : "")"
+                asp-route-ratingBefore="@Model.FilterViewModel.RatingBefore"
+                asp-route-ratingAfter="@Model.FilterViewModel.RatingAfter"
                 asp-route-sortorder="@(Model.SortViewModel.PublicationDateSort)">
                 <b>@Html.DisplayNameFor(m => m.Creations.First().PublicationDate)</b>
             </a>
         </th>
         <th>
             <a
-                class="no-text-decoration glyphicon @(Model.SortViewModel.RatingSort == SortState.RatingAsc ? "glyphicon-chevron-up" : "glyphicon-chevron-down")"
+                class="no-text-decoration glyphicon @(Model.SortViewModel.RatingSort == SortState.RatingAsc ? "glyphicon-chevron-down" : "glyphicon-chevron-up")"
                 asp-action="MyCreations"
                 asp-route-pageSize="@(Model.PageViewModel.PageSize)"
                 asp-route-title="@(Model.FilterViewModel.SelectedTitle)"
                 asp-route-genre="@(Model.FilterViewModel.SelectedGenre)"
                 asp-route-authorUsername="@(Model.FilterViewModel.SelectedAuthorUsername)"
+                asp-route-publishedBefore="@(Model.FilterViewModel.PublishedBefore.HasValue ? Model.FilterViewModel.PublishedBefore.Value.ToString("yyyy-MM-dd") : "")"
+                asp-route-publishedAfter="@(Model.FilterViewModel.PublishedAfter.HasValue ? Model.FilterViewModel.PublishedAfter.Value.ToString("yyyy-MM-dd") : "")"
+                asp-route-ratingBefore="@Model.FilterViewModel.RatingBefore"
+                asp-route-ratingAfter="@Model.FilterViewModel.RatingAfter"
                 asp-route-sortorder="@(Model.SortViewModel.RatingSort)">
-                <b>@Html.DisplayNameFor(m => m.Creations.First().Rating)</b>
+                <b>@Html.DisplayNameFor(m => m.Creations.First().TotalRating)</b>
+            </a>
+        </th>
+        <th>
+            <a
+                class="no-text-decoration glyphicon @(Model.SortViewModel.CommentSort == SortState.CommentAsc ? "glyphicon-chevron-down" : "glyphicon-chevron-up")"
+                asp-action="MyCreations"
+                asp-route-pageSize="@(Model.PageViewModel.PageSize)"
+                asp-route-title="@(Model.FilterViewModel.SelectedTitle)"
+                asp-route-genre="@(Model.FilterViewModel.SelectedGenre)"
+                asp-route-authorUsername="@(Model.FilterViewModel.SelectedAuthorUsername)"
+                asp-route-publishedBefore="@(Model.FilterViewModel.PublishedBefore.HasValue ? Model.FilterViewModel.PublishedBefore.Value.ToString("yyyy-MM-dd") : "")"
+                asp-route-publishedAfter="@(Model.FilterViewModel.PublishedAfter.HasValue ? Model.FilterViewModel.PublishedAfter.Value.ToString("yyyy-MM-dd") : "")"
+                asp-route-ratingBefore="@Model.FilterViewModel.RatingBefore"
+                asp-route-ratingAfter="@Model.FilterViewModel.RatingAfter"
+                asp-route-sortorder="@(Model.SortViewModel.CommentSort)">
+                <b>@Html.DisplayNameFor(m => m.Creations.First().CommentCount)</b>
             </a>
         </th>
         <th>Действия</th>
@@ -109,7 +159,8 @@
             </td>
             <td>@creation.Author.Username</td>
             <td>@creation.PublicationDate.ToShortDateString()</td>
-            <td>@creation.Rating (@creation.RatingCount оценок)</td>
+            <td>@creation.TotalRating (@creation.RatingCount оценок)</td>
+            <td>@creation.CommentCount</td>
             <td class="m-auto text-center">
                 <a asp-controller="CreationsPlatform" asp-action="Edit" asp-route-id="@creation.Id" class="btn btn-sm btn-warning">
                     Изменить
@@ -131,6 +182,10 @@
        asp-route-title="@(Model.FilterViewModel.SelectedTitle)"
        asp-route-genre="@(Model.FilterViewModel.SelectedGenre)"
        asp-route-authorUsername="@(Model.FilterViewModel.SelectedAuthorUsername)"
+       asp-route-publishedBefore="@(Model.FilterViewModel.PublishedBefore.HasValue ? Model.FilterViewModel.PublishedBefore.Value.ToString("yyyy-MM-dd") : "")"
+       asp-route-publishedAfter="@(Model.FilterViewModel.PublishedAfter.HasValue ? Model.FilterViewModel.PublishedAfter.Value.ToString("yyyy-MM-dd") : "")"
+       asp-route-ratingBefore="@Model.FilterViewModel.RatingBefore"
+       asp-route-ratingAfter="@Model.FilterViewModel.RatingAfter"
        asp-route-sortorder="@(Model.SortViewModel.Current)"
        class="btn btn-outline-dark">
         <i class="glyphicon glyphicon-chevron-left"></i>
@@ -145,6 +200,10 @@
        asp-route-title="@(Model.FilterViewModel.SelectedTitle)"
        asp-route-genre="@(Model.FilterViewModel.SelectedGenre)"
        asp-route-authorUsername="@(Model.FilterViewModel.SelectedAuthorUsername)"
+       asp-route-publishedBefore="@(Model.FilterViewModel.PublishedBefore.HasValue ? Model.FilterViewModel.PublishedBefore.Value.ToString("yyyy-MM-dd") : "")"
+       asp-route-publishedAfter="@(Model.FilterViewModel.PublishedAfter.HasValue ? Model.FilterViewModel.PublishedAfter.Value.ToString("yyyy-MM-dd") : "")"
+       asp-route-ratingBefore="@Model.FilterViewModel.RatingBefore"
+       asp-route-ratingAfter="@Model.FilterViewModel.RatingAfter"
        asp-route-sortOrder="@(Model.SortViewModel.Current)"
        class="btn btn-outline-dark">
         <b>@Html.DisplayNameFor(m => m.PageViewModel.HasNextPage)</b>

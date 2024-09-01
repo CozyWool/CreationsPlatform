@@ -20,7 +20,7 @@
         </th>
         <th>
             <a
-                class="no-text-decoration glyphicon @(Model.SortViewModel.AuthorUsernameSort == SortState.AuthorUsernameAsc ? "glyphicon-chevron-up" : "glyphicon-chevron-down")"
+                class="no-text-decoration glyphicon @(Model.SortViewModel.AuthorUsernameSort == SortState.AuthorUsernameAsc ? "glyphicon-chevron-down" : "glyphicon-chevron-up")"
                 asp-action="Top50"
                 asp-route-pageSize="@(Model.PageViewModel.PageSize)"
                 asp-route-sortorder="@(Model.SortViewModel.AuthorUsernameSort)">
@@ -32,11 +32,20 @@
         </th>
         <th>
             <a
-                class="no-text-decoration glyphicon @(Model.SortViewModel.RatingSort == SortState.RatingAsc ? "glyphicon-chevron-up" : "glyphicon-chevron-down")"
+                class="no-text-decoration glyphicon @(Model.SortViewModel.RatingSort == SortState.RatingAsc ? "glyphicon-chevron-down" : "glyphicon-chevron-up")"
                 asp-action="Top50"
                 asp-route-pageSize="@(Model.PageViewModel.PageSize)"
                 asp-route-sortorder="@(Model.SortViewModel.RatingSort)">
-                <b>@Html.DisplayNameFor(m => m.Creations.First().Rating)</b>
+                <b>@Html.DisplayNameFor(m => m.Creations.First().TotalRating)</b>
+            </a>
+        </th>
+        <th>
+            <a
+                class="no-text-decoration glyphicon @(Model.SortViewModel.CommentSort == SortState.CommentAsc ? "glyphicon-chevron-down" : "glyphicon-chevron-up")"
+                asp-action="Top50"
+                asp-route-pageSize="@(Model.PageViewModel.PageSize)"
+                asp-route-sortorder="@(Model.SortViewModel.CommentSort)">
+                <b>@Html.DisplayNameFor(m => m.Creations.First().CommentCount)</b>
             </a>
         </th>
     </tr>
@@ -55,7 +64,8 @@
             </td>
             <td>@creation.Author.Username</td>
             <td>@creation.PublicationDate.ToShortDateString()</td>
-            <td>@creation.Rating (@creation.RatingCount оценок)</td>
+            <td>@creation.TotalRating (@creation.RatingCount оценок)</td>
+            <td>@creation.CommentCount</td>
         </tr>
     }
     </tbody>
