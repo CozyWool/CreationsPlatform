@@ -5,27 +5,20 @@ using CreationsPlatformWebApplication.Models.ViewModels;
 using CreationsPlatformWebApplication.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace CreationsPlatformWebApplication.Controllers;
 
 [Route("[controller]")]
 [Authorize]
-public class CreationsPlatformController : Controller
+public class CreationsPlatformController(
+    ICreationService creationService,
+    IUserService userService,
+    IGenreService genreService,
+    ICommentService commentService)
+    : Controller
 {
-    private readonly ICreationService _creationService;
-    private readonly IUserService _userService;
-    private readonly IGenreService _genreService;
-    private readonly ICommentService _commentService;
-    private List<GenreModel> Genres => _genreService.GetGenres().Result;
-
-    public CreationsPlatformController(ICreationService creationService, IUserService userService,
-        IGenreService genreService, ICommentService commentService)
-    {
-        _creationService = creationService;
-        _userService = userService;
-        _genreService = genreService;
-        _commentService = commentService;
-    }
+    private List<GenreModel> Genres => genreService.GetGenres().Result;
 
 
     [AllowAnonymous]
@@ -33,7 +26,7 @@ public class CreationsPlatformController : Controller
     [HttpGet("index")]
     public async Task<IActionResult> Index(IndexRequest request)
     {
-        var (items, count) = await _creationService.GetPagedSortedFiltered(pageNumber: request.PageNumber,
+        var (items, count) = await creationService.GetPagedSortedFiltered(pageNumber: request.PageNumber,
             pageSize: request.PageSize,
             sortOrder: request.SortOrder,
             genreId: request.GenreId,
@@ -59,15 +52,17 @@ public class CreationsPlatformController : Controller
     public async Task<IActionResult> Top50(Top50Request request)
     {
         var (items, count) =
-            await _creationService.GetPagedSortedFiltered(pageNumber: request.PageNumber,
+            await creationService.GetPagedSortedFiltered(pageNumber: request.PageNumber,
                 pageSize: request.PageSize,
                 sortOrder: request.SortOrder,
+                genreId: request.GenreId,
                 authorUsername: request.AuthorUsername,
                 limit: 50);
         var viewModel = new Top50ViewModel
         {
             PageViewModel = new PageViewModel(count, request.PageNumber, request.PageSize),
             SortViewModel = new SortViewModel(request.SortOrder),
+            FilterViewModel = new FilterViewModel(Genres, request.GenreId, "", "", null, null, null, null),
             Creations = items
         };
         ViewData["Title"] = "Топ-50 произведений";
@@ -78,7 +73,7 @@ public class CreationsPlatformController : Controller
     public async Task<IActionResult> MyCreations(MyCreationsRequest request)
     {
         var username = User.Identity.Name;
-        var (items, count) = await _creationService.GetPagedSortedFiltered(pageNumber: request.PageNumber,
+        var (items, count) = await creationService.GetPagedSortedFiltered(pageNumber: request.PageNumber,
             pageSize: request.PageSize,
             sortOrder: request.SortOrder,
             genreId: request.GenreId,
@@ -106,9 +101,9 @@ public class CreationsPlatformController : Controller
     [HttpGet("id/{id:int}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var creationModel = await _creationService.GetById(id);
+        var creationModel = await creationService.GetById(id);
         if (creationModel == null)
-            throw new ArgumentException();
+            return NotFound();
         creationModel.Comments = creationModel.Comments.OrderByDescending(model => model.PublicationDate).ToList();
         var viewModel = new DetailedCreationViewModel
         {
@@ -123,21 +118,25 @@ public class CreationsPlatformController : Controller
     public async Task<IActionResult> AddComment(CommentModel comment)
     {
         ViewData["Title"] = comment.CreationTitle;
+        if (string.IsNullOrEmpty(comment.Content))
+        {
+            return await GetById(comment.CreationId);
+        }
         comment.UserId = Guid.Parse(User.Claims.FirstOrDefault(claim => claim.Type == "UserId").Value);
-        await _commentService.Create(comment);
+        await commentService.Create(comment);
         return Redirect($"id/{comment.CreationId}");
     }
 
     [HttpDelete("delete-comment")]
     public async Task<IActionResult> DeleteComment(int commentId, int creationId)
     {
-        if ((await _commentService.GetById(commentId)).UserId.ToString() !=
+        if ((await commentService.GetById(commentId)).UserId.ToString() !=
             User.Claims.FirstOrDefault(claim => claim.Type == "UserId").Value)
         {
             return RedirectToAction("AccessDenied", "Account");
         }
 
-        if (await _commentService.Delete(commentId))
+        if (await commentService.Delete(commentId))
         {
             return Redirect($"id/{creationId}");
         }
@@ -161,7 +160,7 @@ public class CreationsPlatformController : Controller
     public async Task<IActionResult> Create([FromForm(Name = "Creation")] CreationModel creationModel)
     {
         creationModel.Author =
-            await _userService
+            await userService
                 .GetAuthorById
                     (Guid.Parse(User.Claims.FirstOrDefault(claim => claim.Type == "UserId").Value));
         creationModel.PublicationDate = DateTime.UtcNow;
@@ -170,14 +169,14 @@ public class CreationsPlatformController : Controller
                 .Genres
                 .DistinctBy(e => e.Id)
                 .ToList();
-        await _creationService.Create(creationModel);
+        await creationService.Create(creationModel);
         return RedirectToAction(nameof(Index));
     }
 
     [HttpGet("edit/{id:int}")]
     public async Task<IActionResult> Edit([FromRoute] int id)
     {
-        var creationModel = await _creationService.GetById(id);
+        var creationModel = await creationService.GetById(id);
         if (creationModel == null) return BadRequest();
         if (creationModel.Author.Id.ToString() != User.Claims.FirstOrDefault(claim => claim.Type == "UserId").Value)
             return RedirectToAction("AccessDenied", "Account");
@@ -202,7 +201,7 @@ public class CreationsPlatformController : Controller
                 .Genres
                 .DistinctBy(e => e.Id)
                 .ToList();
-        await _creationService.Update(creationModel);
+        await creationService.Update(creationModel);
         return RedirectToAction(nameof(MyCreations));
     }
 
@@ -254,10 +253,10 @@ public class CreationsPlatformController : Controller
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
-        if ((await _creationService.GetById(id)).Author.Id.ToString() !=
+        if ((await creationService.GetById(id)).Author.Id.ToString() !=
             User.Claims.FirstOrDefault(claim => claim.Type == "UserId").Value)
             return RedirectToAction("AccessDenied", "Account");
-        if (await _creationService.Delete(id))
+        if (await creationService.Delete(id))
         {
             return RedirectToAction(nameof(MyCreations));
         }

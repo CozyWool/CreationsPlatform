@@ -4,24 +4,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CreationsPlatformWebApplication.DataAccess.Repositories;
 
-public class CommentRepository : ICommentRepository
+public class CommentRepository(ApplicationDbContext applicationDbContext, ICreationRepository creationRepository)
+    : ICommentRepository
 {
-    private readonly ApplicationDbContext _applicationDbContext;
-    private readonly ICreationRepository _creationRepository;
-
-    public CommentRepository(ApplicationDbContext applicationDbContext, ICreationRepository creationRepository)
-    {
-        _applicationDbContext = applicationDbContext;
-        _creationRepository = creationRepository;
-    }
-
     public async Task<List<CommentEntity>> GetAll() =>
-        await _applicationDbContext
+        await applicationDbContext
             .Comments
             .ToListAsync();
 
     public async Task<CommentEntity?> GetById(int id) =>
-        await _applicationDbContext
+        await applicationDbContext
             .Comments
             .Include(x => x.User)
             .FirstOrDefaultAsync(entity => entity.Id == id);
@@ -34,16 +26,16 @@ public class CommentRepository : ICommentRepository
 
         if (entity.Id <= 0)
         {
-            if (await _applicationDbContext.Comments.AnyAsync())
-                entity.Id = _applicationDbContext.Comments.OrderBy(e => e.Id).Last().Id + 1;
+            if (await applicationDbContext.Comments.AnyAsync())
+                entity.Id = applicationDbContext.Comments.OrderBy(e => e.Id).Last().Id + 1;
             else
                 entity.Id = 0;
         }
 
-        _applicationDbContext.Comments.Add(entity);
-        var creationEntity = await _creationRepository.GetById(entity.CreationId);
+        applicationDbContext.Comments.Add(entity);
+        var creationEntity = await creationRepository.GetById(entity.CreationId);
 
-        var existingCommentEntity = await _applicationDbContext.Comments.FirstOrDefaultAsync(commentEntity =>
+        var existingCommentEntity = await applicationDbContext.Comments.FirstOrDefaultAsync(commentEntity =>
             commentEntity.CreationId == entity.CreationId && commentEntity.UserId == entity.UserId);
         if (existingCommentEntity != null && existingCommentEntity.Rating != -1)
         {
@@ -58,14 +50,14 @@ public class CommentRepository : ICommentRepository
 
         creationEntity.CommentCount++;
 
-        await _creationRepository.Update(creationEntity);
-        await _applicationDbContext.SaveChangesAsync();
+        await creationRepository.Update(creationEntity);
+        await applicationDbContext.SaveChangesAsync();
     }
 
     public async Task Update(CommentEntity entity)
     {
         var oldEntity = await GetById(entity.Id);
-        var creationEntity = await _creationRepository.GetById(entity.CreationId);
+        var creationEntity = await creationRepository.GetById(entity.CreationId);
 
         // Убрали старую оценку из общей
         creationEntity.TotalRating = (creationEntity.TotalRating * creationEntity.RatingCount - oldEntity.Rating) /
@@ -78,8 +70,8 @@ public class CommentRepository : ICommentRepository
         oldEntity.Rating = entity.Rating;
         oldEntity.PublicationDate = entity.PublicationDate;
         oldEntity.Content = entity.Content;
-        _applicationDbContext.Update(oldEntity);
-        await _applicationDbContext.SaveChangesAsync();
+        applicationDbContext.Update(oldEntity);
+        await applicationDbContext.SaveChangesAsync();
     }
 
     public async Task<bool> Delete(int id)
@@ -87,7 +79,7 @@ public class CommentRepository : ICommentRepository
         var entity = await GetById(id);
         if (entity == null) return false;
 
-        var creationEntity = await _creationRepository.GetById(entity.CreationId);
+        var creationEntity = await creationRepository.GetById(entity.CreationId);
 
         if (entity.Rating != -1)
         {
@@ -104,8 +96,8 @@ public class CommentRepository : ICommentRepository
         creationEntity.CommentCount--;
 
 
-        _applicationDbContext.Comments.Remove(entity);
-        await _applicationDbContext.SaveChangesAsync();
+        applicationDbContext.Comments.Remove(entity);
+        await applicationDbContext.SaveChangesAsync();
         return true;
     }
 }

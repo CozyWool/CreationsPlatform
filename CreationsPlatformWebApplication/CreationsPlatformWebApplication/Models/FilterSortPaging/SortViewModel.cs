@@ -2,28 +2,19 @@ using CreationsPlatformWebApplication.Enums;
 
 namespace CreationsPlatformWebApplication.Models.FilterSortPaging;
 
-public class SortViewModel
+public class SortViewModel(SortState sortOrder)
 {
-    public SortState IdSort { get; private set; }
-    public SortState TitleSort { get; private set; }
-    public SortState AuthorUsernameSort { get; private set; }
-    public SortState PublicationDateSort { get; private set; }
-    public SortState RatingSort { get; private set; }
-    public SortState CommentSort { get; private set; }
-    public SortState Current { get; private set; }
+    public SortState IdSort { get; private set; } = sortOrder == SortState.IdAsc ? SortState.IdDesc : SortState.IdAsc;
+    public SortState TitleSort { get; private set; } = sortOrder == SortState.TitleAsc ? SortState.TitleDesc : SortState.TitleAsc;
+    public SortState AuthorUsernameSort { get; private set; } = sortOrder == SortState.AuthorUsernameAsc
+        ? SortState.AuthorUsernameDesc
+        : SortState.AuthorUsernameAsc;
 
-    public SortViewModel(SortState sortOrder)
-    {
-        IdSort = sortOrder == SortState.IdAsc ? SortState.IdDesc : SortState.IdAsc;
-        TitleSort = sortOrder == SortState.TitleAsc ? SortState.TitleDesc : SortState.TitleAsc;
-        AuthorUsernameSort = sortOrder == SortState.AuthorUsernameAsc
-            ? SortState.AuthorUsernameDesc
-            : SortState.AuthorUsernameAsc;
-        PublicationDateSort = sortOrder == SortState.PublicationDateAsc
-            ? SortState.PublicationDateDesc
-            : SortState.PublicationDateAsc;
-        RatingSort = sortOrder == SortState.RatingAsc ? SortState.RatingDesc : SortState.RatingAsc;
-        CommentSort = sortOrder == SortState.CommentAsc ? SortState.CommentDesc : SortState.CommentAsc;
-        Current = sortOrder;
-    }
+    public SortState PublicationDateSort { get; private set; } = sortOrder == SortState.PublicationDateAsc
+        ? SortState.PublicationDateDesc
+        : SortState.PublicationDateAsc;
+
+    public SortState RatingSort { get; private set; } = sortOrder == SortState.RatingAsc ? SortState.RatingDesc : SortState.RatingAsc;
+    public SortState CommentSort { get; private set; } = sortOrder == SortState.CommentAsc ? SortState.CommentDesc : SortState.CommentAsc;
+    public SortState Current { get; private set; } = sortOrder;
 }

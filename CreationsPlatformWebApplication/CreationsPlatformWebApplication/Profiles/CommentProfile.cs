@@ -13,20 +13,14 @@ public class CommentProfile : Profile
         CreateMap<CommentEntity, CommentModel>().AfterMap<CommentModelMappingAction>();
     }
     
-    private class CommentModelMappingAction : IMappingAction<CommentEntity, CommentModel>
+    private class CommentModelMappingAction(IUserService userService, ICreationService creationService)
+        : IMappingAction<CommentEntity, CommentModel>
     {
-        private readonly IUserService _userService;
-        private readonly ICreationService _creationService;
-
-        public CommentModelMappingAction (IUserService userService, ICreationService creationService)
-        {
-            _userService = userService;
-            _creationService = creationService;
-        }
+        private readonly ICreationService _creationService = creationService;
 
         public void Process(CommentEntity source, CommentModel destination, ResolutionContext context)
         {
-            destination.Username = _userService.GetAuthorById(source.UserId).Result.Username;
+            destination.Username = userService.GetAuthorById(source.UserId).Result.Username;
         }
     }
 }

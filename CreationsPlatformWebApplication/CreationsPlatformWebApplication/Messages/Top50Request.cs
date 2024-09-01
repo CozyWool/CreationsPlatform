@@ -5,6 +5,8 @@ namespace CreationsPlatformWebApplication.Messages;
 
 public class Top50Request
 {
+    [BindProperty(Name = "genre")] public int? GenreId { get; set; }
+
     [BindProperty(Name = "authorUsername")]
     public string AuthorUsername { get; set; }
 

@@ -14,18 +14,11 @@ public class CreationProfile : Profile
         CreateMap<CreationEntity, CreationModel>().AfterMap<CreationModelMappingAction>();
     }
 
-    private class CreationModelMappingAction : IMappingAction<CreationEntity, CreationModel>
+    private class CreationModelMappingAction(IUserService userService) : IMappingAction<CreationEntity, CreationModel>
     {
-        private readonly IUserService _userService;
-
-        public CreationModelMappingAction(IUserService userService)
-        {
-            _userService = userService;
-        }
-
         public void Process(CreationEntity source, CreationModel destination, ResolutionContext context)
         {
-            destination.Author = _userService.GetAuthorById(source.AuthorId).Result;
+            destination.Author = userService.GetAuthorById(source.AuthorId).Result;
         }
     }
 }

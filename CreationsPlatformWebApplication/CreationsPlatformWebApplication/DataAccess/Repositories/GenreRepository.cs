@@ -4,17 +4,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CreationsPlatformWebApplication.DataAccess.Repositories;
 
-public class GenreRepository : IGenreRepository
+public class GenreRepository(ApplicationDbContext applicationDbContext) : IGenreRepository
 {
-    private readonly ApplicationDbContext _applicationDbContext;
-
-    public GenreRepository(ApplicationDbContext applicationDbContext)
-    {
-        _applicationDbContext = applicationDbContext;
-    }
-
-    public async Task<List<GenreEntity>> GetAll() => await _applicationDbContext.Genres.ToListAsync();
+    public async Task<List<GenreEntity>> GetAll() => await applicationDbContext.Genres.ToListAsync();
 
     public async Task<GenreEntity?> GetById(int id) => 
-        await _applicationDbContext.Genres.FirstOrDefaultAsync(entity => entity.Id == id);
+        await applicationDbContext.Genres.FirstOrDefaultAsync(entity => entity.Id == id);
 }
