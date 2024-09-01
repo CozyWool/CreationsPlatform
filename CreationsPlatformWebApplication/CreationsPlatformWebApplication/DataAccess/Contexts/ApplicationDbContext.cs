@@ -66,7 +66,7 @@ public class ApplicationDbContext : DbContext
                 .HasConstraintName("author_id_fk");
 
             entity.HasMany(d => d.Genres)
-                .WithMany();
+                .WithMany(p => p.Creations);
 
             entity.HasMany(d => d.Comments)
                 .WithOne()
@@ -104,5 +104,57 @@ public class ApplicationDbContext : DbContext
                 .HasMaxLength(100)
                 .HasColumnName("name");
         });
+        modelBuilder.Entity<GenreEntity>().HasData([
+            new GenreEntity
+            {
+                Id = 1,
+                Name = "Роман",
+            },
+            new GenreEntity
+            {
+                Id = 2,
+                Name = "Художественная литература",
+            },
+            new GenreEntity
+            {
+                Id = 3,
+                Name = "Детектив",
+            },
+            new GenreEntity
+            {
+                Id = 4,
+                Name = "Роман",
+            },
+            new GenreEntity
+            {
+                Id = 5,
+                Name = "Триллер",
+            },
+            new GenreEntity
+            {
+                Id = 6,
+                Name = "Поэзия",
+            },
+            new GenreEntity
+            {
+                Id = 7,
+                Name = "Биография",
+            },
+            new GenreEntity
+            {
+                Id = 8,
+                Name = "Фэнтези",
+            },
+            new GenreEntity
+            {
+                Id = 9,
+                Name = "Драма",
+            },
+            new GenreEntity
+            {
+                Id = 10,
+                Name = "Научная фантастика",
+            },
+        ]);
     }
 }
