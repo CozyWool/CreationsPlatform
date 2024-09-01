@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace CreationsPlatformWebApplication.Models.FilterSortPaging;
+namespace CreationsPlatformWebApplication.Models.ViewModels.FilterSortPaging;
 
 public class PageViewModel(int count, int pageNumber, int pageSize)
 {

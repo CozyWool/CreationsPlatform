@@ -1,15 +1,14 @@
 ﻿using CreationsPlatformWebApplication.Messages;
 using CreationsPlatformWebApplication.Models.Creation;
-using CreationsPlatformWebApplication.Models.FilterSortPaging;
 using CreationsPlatformWebApplication.Models.ViewModels;
+using CreationsPlatformWebApplication.Models.ViewModels.FilterSortPaging;
 using CreationsPlatformWebApplication.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace CreationsPlatformWebApplication.Controllers;
 
-[Route("[controller]")]
+[Route("creations-platform")]
 [Authorize]
 public class CreationsPlatformController(
     ICreationService creationService,
@@ -98,20 +97,22 @@ public class CreationsPlatformController(
         return View(viewModel);
     }
 
-    [HttpGet("id/{id:int}")]
-    public async Task<IActionResult> GetById(int id)
+    [HttpGet("details")]
+    public async Task<IActionResult> Details(DetailedCreationRequest request)
     {
-        var creationModel = await creationService.GetById(id);
+        var (creationModel, count) =
+            await creationService.GetByIdPaged(request.Id, request.PageSize, request.PageNumber);
         if (creationModel == null)
             return NotFound();
         creationModel.Comments = creationModel.Comments.OrderByDescending(model => model.PublicationDate).ToList();
         var viewModel = new DetailedCreationViewModel
         {
             Creation = creationModel,
+            PageViewModel = new PageViewModel(count, request.PageNumber, request.PageSize),
             Comment = new CommentModel()
         };
         ViewData["Title"] = creationModel.Title;
-        return View("DetailedCreation", viewModel);
+        return View("Details", viewModel);
     }
 
     [HttpPost("add-comment")]
@@ -120,11 +121,12 @@ public class CreationsPlatformController(
         ViewData["Title"] = comment.CreationTitle;
         if (string.IsNullOrEmpty(comment.Content))
         {
-            return await GetById(comment.CreationId);
+            return await Details(new DetailedCreationRequest {Id = comment.CreationId});
         }
+
         comment.UserId = Guid.Parse(User.Claims.FirstOrDefault(claim => claim.Type == "UserId").Value);
         await commentService.Create(comment);
-        return Redirect($"id/{comment.CreationId}");
+        return Redirect($"{nameof(Details).ToLower()}/{comment.CreationId}");
     }
 
     [HttpDelete("delete-comment")]

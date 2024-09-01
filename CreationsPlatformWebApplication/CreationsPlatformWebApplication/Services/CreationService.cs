@@ -69,4 +69,11 @@ public class CreationService(ICreationRepository creationRepository, IMapper map
         var mappedItems = mapper.Map<List<CreationModel>>(items);
         return (mappedItems, count);
     }
+
+    public async Task<(CreationModel? creationModel, int count)> GetByIdPaged(int id, int pageSize, int pageNumber)
+    {
+        var (entity, count) = await creationRepository.GetByIdPaged(id, pageNumber, pageSize);
+        var model = mapper.Map<CreationModel>(entity);
+        return (model, count);
+    }
 }

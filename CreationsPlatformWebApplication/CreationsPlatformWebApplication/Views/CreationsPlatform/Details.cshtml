@@ -18,7 +18,34 @@
             <p>@Html.DisplayNameFor(m => m.Creation.PublicationDate): <b>@Model.Creation.PublicationDate.ToShortDateString()</b></p>
         </div>
     </div>
-    <textarea class="content m-auto w-100 form-control-plaintext" rows="37" readonly>@Model.Creation.Content</textarea>
+    <textarea class="content m-auto w-100 form-control-plaintext textarea-height" readonly>@Model.Creation.Content</textarea>
+    @if (Model.PageViewModel.HasPreviousPage)
+    {
+        <a asp-action="Details"
+           asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
+           asp-route-pageSize="@(Model.PageViewModel.PageSize)"
+           asp-route-id="@Model.Creation.Id"
+           class="btn btn-outline-dark">
+            <i class="glyphicon glyphicon-chevron-left"></i>
+            <b>@Html.DisplayNameFor(m => m.PageViewModel.HasPreviousPage)</b>
+        </a>
+    }
+    @if (Model.PageViewModel.HasNextPage)
+    {
+        <a asp-action="Details"
+           asp-route-page="@(Model.PageViewModel.PageNumber + 1)"
+           asp-route-pageSize="@(Model.PageViewModel.PageSize)"
+           asp-route-id="@Model.Creation.Id"
+           class="btn btn-outline-dark">
+            <b>@Html.DisplayNameFor(m => m.PageViewModel.HasNextPage)</b>
+            <i class="glyphicon glyphicon-chevron-right"></i>
+        </a>
+    }
+
+    <p class="d-inline">
+        @Html.DisplayNameFor(m => m.PageViewModel.PageNumber)
+        <b> @Model.PageViewModel.PageNumber</b> из <b> @Model.PageViewModel.TotalPages </b >
+    </p>
 </div>
 <footer class="border-top footer mt-2">
     <div class="container">

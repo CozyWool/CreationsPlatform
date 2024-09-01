@@ -1,5 +1,5 @@
 using CreationsPlatformWebApplication.Models.Creation;
-using CreationsPlatformWebApplication.Models.FilterSortPaging;
+using CreationsPlatformWebApplication.Models.ViewModels.FilterSortPaging;
 
 namespace CreationsPlatformWebApplication.Models.ViewModels;
 
