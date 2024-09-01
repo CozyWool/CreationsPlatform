@@ -5,29 +5,20 @@ using CreationsPlatformWebApplication.Models.Creation;
 
 namespace CreationsPlatformWebApplication.Services;
 
-public class CommentService : ICommentService
+public class CommentService(ICommentRepository commentRepository, IMapper mapper) : ICommentService
 {
-    private readonly ICommentRepository _commentRepository;
-    private readonly IMapper _mapper;
-
-    public CommentService(ICommentRepository commentRepository, IMapper mapper)
-    {
-        _commentRepository = commentRepository;
-        _mapper = mapper;
-    }
-
     public async Task<List<CommentModel>> GetAll() =>
-        _mapper.Map<List<CommentModel>>(await _commentRepository.GetAll());
+        mapper.Map<List<CommentModel>>(await commentRepository.GetAll());
 
     public async Task<CommentModel?> GetById(int id) =>
-        _mapper.Map<CommentModel?>(await _commentRepository.GetById(id));
+        mapper.Map<CommentModel?>(await commentRepository.GetById(id));
 
     public async Task Create(CommentModel model)
     {
-        var entity = _mapper.Map<CommentEntity>(model);
-        await _commentRepository.Create(entity);
+        var entity = mapper.Map<CommentEntity>(model);
+        await commentRepository.Create(entity);
     }
 
     public async Task<bool> Delete(int id) =>
-        await _commentRepository.Delete(id);
+        await commentRepository.Delete(id);
 }

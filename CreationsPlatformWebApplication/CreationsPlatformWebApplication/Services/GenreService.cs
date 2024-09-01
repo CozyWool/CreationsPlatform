@@ -4,18 +4,9 @@ using CreationsPlatformWebApplication.Models.Creation;
 
 namespace CreationsPlatformWebApplication.Services;
 
-public class GenreService : IGenreService
+public class GenreService(IGenreRepository genreRepository, IMapper mapper) : IGenreService
 {
-    private readonly IGenreRepository _genreRepository;
-    private readonly IMapper _mapper;
-
-    public GenreService(IGenreRepository genreRepository, IMapper mapper)
-    {
-        _genreRepository = genreRepository;
-        _mapper = mapper;
-    }
-
     public async Task<List<GenreModel>> GetGenres() =>
-        _mapper.Map<List<GenreModel>>(await _genreRepository.GetAll());
+        mapper.Map<List<GenreModel>>(await genreRepository.GetAll());
 
 }

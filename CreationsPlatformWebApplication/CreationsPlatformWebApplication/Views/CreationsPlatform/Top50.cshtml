@@ -2,6 +2,10 @@
 
 <form method="get" class="form-inline">
     <div class="form-floating mb-2">
+        <select name="genre" asp-items="Model.FilterViewModel.Genres" class="form-control"></select>
+        <label>@Html.DisplayNameFor(m => m.FilterViewModel.SelectedGenre)</label>
+    </div>
+    <div class="form-floating mb-2">
         <input name="pageSize" value="@Model.PageViewModel.PageSize" class="form-control"/>
         <label>@Html.DisplayNameFor(m => m.PageViewModel.PageSize)</label>
     </div>
@@ -19,13 +23,7 @@
             @Html.DisplayNameFor(m => m.Creations.First().Title)
         </th>
         <th>
-            <a
-                class="no-text-decoration glyphicon @(Model.SortViewModel.AuthorUsernameSort == SortState.AuthorUsernameAsc ? "glyphicon-chevron-down" : "glyphicon-chevron-up")"
-                asp-action="Top50"
-                asp-route-pageSize="@(Model.PageViewModel.PageSize)"
-                asp-route-sortorder="@(Model.SortViewModel.AuthorUsernameSort)">
-                <b>@Html.DisplayNameFor(m => m.Creations.First().Author.Username)</b>
-            </a>
+            @Html.DisplayNameFor(m => m.Creations.First().Author.Username)
         </th>
         <th>
             @Html.DisplayNameFor(m => m.Creations.First().PublicationDate)

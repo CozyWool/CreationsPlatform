@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CreationsPlatformWebApplication.Models.Creation;
 
@@ -13,8 +14,8 @@ public class CommentModel
 
     [Display(Name = "Id произведения")] public int CreationId { get; set; }
 
-    [Display(Name = "Оставьте комментарий")]
     [Required(ErrorMessage = "Комментарий не может быть пустым")]
+    [Display(Name = "Оставьте комментарий")]
     public string Content { get; set; }
 
     [Display(Name = "Оцените произведение")]
