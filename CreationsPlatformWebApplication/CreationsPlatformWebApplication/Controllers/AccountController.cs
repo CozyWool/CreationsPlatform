@@ -11,15 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace CreationsPlatformWebApplication.Controllers;
 
 [Route("[controller]/[action]")]
-public class AccountController : Controller
+public class AccountController(IUserService userService) : Controller
 {
-    private readonly IUserService _userService;
-
-    public AccountController(IUserService userService)
-    {
-        _userService = userService;
-    }
-
     [HttpGet]
     public IActionResult Login(string? returnUrl = null)
     {
@@ -33,7 +26,7 @@ public class AccountController : Controller
     {
         if (!ModelState.IsValid) return View(model);
 
-        var statusCode = await _userService.Login(model);
+        var statusCode = await userService.Login(model);
         switch (statusCode)
         {
             case UserServiceStatusCodes.OK:
@@ -68,7 +61,7 @@ public class AccountController : Controller
     {
         if (!ModelState.IsValid) return View(model);
 
-        var statusCode = await _userService.Register(model);
+        var statusCode = await userService.Register(model);
         switch (statusCode)
         {
             case UserServiceStatusCodes.OK:
@@ -88,7 +81,7 @@ public class AccountController : Controller
 
     public async Task<IActionResult> Logout()
     {
-        if (await _userService.Logout())
+        if (await userService.Logout())
             return RedirectToAction("Login", "Account");
         return RedirectToAction("Index", "CreationsPlatform");
     }
@@ -124,7 +117,7 @@ public class AccountController : Controller
     [Authorize]
     public async Task<IActionResult> Profile(ProfileModel model)
     {
-        var statusCode = await _userService.UpdateProfile(model);
+        var statusCode = await userService.UpdateProfile(model);
         // обожаю этот новый сахар
         model.StatusMessage = statusCode switch
         {
@@ -157,7 +150,7 @@ public class AccountController : Controller
     [Authorize]
     public async Task<IActionResult> Email(EmailModel model)
     {
-        var statusCode = await _userService.UpdateEmail(model);
+        var statusCode = await userService.UpdateEmail(model);
         // обожаю этот новый сахар
         model.StatusMessage = statusCode switch
         {
@@ -190,7 +183,7 @@ public class AccountController : Controller
     {
         ViewData["ActivePage"] = nameof(Password);
 
-        var statusCode = await _userService.UpdatePassword(model);
+        var statusCode = await userService.UpdatePassword(model);
         // обожаю этот новый сахар
         model.StatusMessage = statusCode switch
         {
@@ -220,7 +213,7 @@ public class AccountController : Controller
     public async Task<IActionResult> DeleteAccount(DeleteAccountModel model)
     {
         ViewData["ActivePage"] = nameof(DeleteAccount);
-        var isPasswordValid = await _userService.VerifyPassword(User.Identity.Name, model.Password) ==
+        var isPasswordValid = await userService.VerifyPassword(User.Identity.Name, model.Password) ==
                               UserServiceStatusCodes.OK;
 
         if (!isPasswordValid)
@@ -229,8 +222,8 @@ public class AccountController : Controller
             return View($"Manage/{nameof(DeleteAccount)}");
         }
 
-        await _userService.DeleteUser(User.Identity.Name);
-        await _userService.Logout();
+        await userService.DeleteUser(User.Identity.Name);
+        await userService.Logout();
         return RedirectToAction("Register");
     }
 }

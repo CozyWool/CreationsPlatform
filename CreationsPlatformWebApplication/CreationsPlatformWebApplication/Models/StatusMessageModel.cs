@@ -1,6 +1,6 @@
 namespace CreationsPlatformWebApplication.Models;
 
-public class StatusMessageModel
+public class StatusMessageModel(string message, bool isError)
 {
     public StatusMessageModel() : this(null)
     {
@@ -11,11 +11,6 @@ public class StatusMessageModel
     {
     }
 
-    public StatusMessageModel(string message, bool isError)
-    {
-        Message = message;
-        IsError = isError;
-    }
-    public string Message { get; set; }
-    public bool IsError { get; set; }
+    public string Message { get; set; } = message;
+    public bool IsError { get; set; } = isError;
 }
