@@ -184,4 +184,18 @@ public class CreationRepository(ApplicationDbContext applicationDbContext) : ICr
             .ToListAsync();
         return (items, count);
     }
+
+    public async Task<(CreationEntity entity, int count)> GetByIdPaged(int id, int pageNumber, int pageSize)
+    {
+        var entity = await GetById(id);
+
+        var contentSplit = entity.Content.Split(" ");
+        var count = contentSplit.Length;
+        contentSplit = contentSplit
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToArray();
+        entity.Content = string.Join(" ", contentSplit);
+        return (entity, count);
+    }
 }

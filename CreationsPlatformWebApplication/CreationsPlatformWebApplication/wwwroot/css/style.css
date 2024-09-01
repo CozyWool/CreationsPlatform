@@ -38,6 +38,9 @@
     max-width: 500px;
     width: 100%;
 }
+.textarea-height{
+    height: 525px !important;
+}
 
 .genre-div {
     display: inline-block;

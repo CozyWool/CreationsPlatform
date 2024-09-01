@@ -25,4 +25,6 @@ public interface ICreationService
         int? ratingBefore = null,
         int? ratingAfter = null,
         int? limit = null);
+
+    Task<(CreationModel? creationModel, int count)> GetByIdPaged(int id, int pageSize, int pageNumber);
 }
