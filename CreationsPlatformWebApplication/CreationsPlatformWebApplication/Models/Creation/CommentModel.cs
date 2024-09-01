@@ -14,7 +14,13 @@ public class CommentModel
     [Display(Name = "Id произведения")] public int CreationId { get; set; }
 
     [Display(Name = "Оставьте комментарий")]
+    [Required(ErrorMessage = "Комментарий не может быть пустым")]
     public string Content { get; set; }
+
+    [Display(Name = "Оцените произведение")]
+    [Range(0, 100,
+        ErrorMessage = "Значение {0} должно быть в пределах {1} и {2}.")]
+    public int Rating { get; set; }
 
     [Display(Name = "Дата публикации")] public DateTime PublicationDate { get; set; }
 }

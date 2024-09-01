@@ -91,8 +91,11 @@ public class CreationRepository(ApplicationDbContext applicationDbContext) : ICr
         int? genreId = null,
         string? title = null,
         string? authorUsername = null,
+        bool? isAuthorUsernameStrict = null,
         DateTime? publishedBefore = null,
         DateTime? publishedAfter = null,
+        int? ratingBefore = null,
+        int? ratingAfter = null,
         int? limit = null)
     {
         //фильтрация
@@ -116,9 +119,11 @@ public class CreationRepository(ApplicationDbContext applicationDbContext) : ICr
 
         if (!string.IsNullOrEmpty(authorUsername))
         {
-            creations = creations.Where(p =>
-                p.Author.Username.ToLower().Trim()
-                    .Contains(authorUsername.ToLower().Trim()));
+            creations = isAuthorUsernameStrict switch
+            {
+                true => creations.Where(p => p.Author.Username.ToLower().Trim() == authorUsername.ToLower().Trim()),
+                _ => creations.Where(p => p.Author.Username.ToLower().Trim().Contains(authorUsername.ToLower().Trim()))
+            };
         }
 
         if (publishedAfter.HasValue)
@@ -133,6 +138,16 @@ public class CreationRepository(ApplicationDbContext applicationDbContext) : ICr
             creations = creations.Where(x => x.PublicationDate.Date <= publishedBefore.Value.Date);
         }
 
+        if (ratingBefore is >= 0 and <= 100)
+        {
+            creations = creations.Where(x => x.TotalRating <= ratingBefore);
+        }
+
+        if (ratingAfter is >= 0 and <= 100)
+        {
+            creations = creations.Where(x => x.TotalRating >= ratingAfter);
+        }
+
         // сортировка
         creations = sortOrder switch
         {
@@ -144,8 +159,8 @@ public class CreationRepository(ApplicationDbContext applicationDbContext) : ICr
             SortState.AuthorUsernameDesc => creations.OrderByDescending(e => e.Author.Username),
             SortState.PublicationDateAsc => creations.OrderBy(e => e.PublicationDate),
             SortState.PublicationDateDesc => creations.OrderByDescending(e => e.PublicationDate),
-            SortState.RatingAsc => creations.OrderBy(e => e.Rating),
-            SortState.RatingDesc => creations.OrderByDescending(e => e.Rating),
+            SortState.RatingAsc => creations.OrderBy(e => e.TotalRating),
+            SortState.RatingDesc => creations.OrderByDescending(e => e.TotalRating),
             SortState.CommentAsc => creations.OrderBy(e => e.CommentCount),
             SortState.CommentDesc => creations.OrderByDescending(e => e.CommentCount),
             _ => creations.OrderBy(e => e.Id)

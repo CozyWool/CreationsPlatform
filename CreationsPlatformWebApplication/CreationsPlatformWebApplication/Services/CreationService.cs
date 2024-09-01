@@ -30,7 +30,7 @@ public class CreationService(ICreationRepository creationRepository, IMapper map
         if (oldEntity == null) return;
         oldEntity.Title = model.Title;
         oldEntity.Genres = mapper.Map<List<GenreEntity>>(model.Genres);
-        oldEntity.Rating = model.Rating;
+        oldEntity.TotalRating = model.TotalRating;
         oldEntity.RatingCount = model.RatingCount;
         oldEntity.Content = model.Content;
         await creationRepository.Update(oldEntity);
@@ -47,8 +47,11 @@ public class CreationService(ICreationRepository creationRepository, IMapper map
         int? genreId = null,
         string? title = null,
         string? authorUsername = null,
+        bool? isAuthorUsernameStrict = null,
         DateTime? publishedBefore = null,
         DateTime? publishedAfter = null,
+        int? ratingBefore = null,
+        int? ratingAfter = null,
         int? limit = null)
     {
         var (items, count) = await creationRepository.GetPagedSortedFiltered(pageNumber,
@@ -57,8 +60,11 @@ public class CreationService(ICreationRepository creationRepository, IMapper map
             genreId,
             title,
             authorUsername,
+            isAuthorUsernameStrict,
             publishedBefore,
             publishedAfter,
+            ratingBefore,
+            ratingAfter,
             limit);
         var mappedItems = mapper.Map<List<CreationModel>>(items);
         return (mappedItems, count);

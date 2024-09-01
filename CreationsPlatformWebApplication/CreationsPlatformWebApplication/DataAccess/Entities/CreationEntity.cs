@@ -6,7 +6,7 @@ public class CreationEntity
     public string Title { get; set; }
     public string Content { get; set; }
     public DateTime PublicationDate { get; set; }
-    public int Rating { get; set; }
+    public int TotalRating { get; set; }
     public int RatingCount { get; set; }
     public int CommentCount { get; set; }
     public Guid AuthorId { get; set; }

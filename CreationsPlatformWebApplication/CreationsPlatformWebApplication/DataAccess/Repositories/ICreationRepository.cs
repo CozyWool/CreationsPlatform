@@ -19,7 +19,10 @@ public interface ICreationRepository
         int? genreId = null,
         string? title = null,
         string? authorUsername = null,
+        bool? isAuthorUsernameStrict = null,
         DateTime? publishedBefore = null,
         DateTime? publishedAfter = null,
+        int? ratingBefore = null,
+        int? ratingAfter = null,
         int? limit = null);
 }

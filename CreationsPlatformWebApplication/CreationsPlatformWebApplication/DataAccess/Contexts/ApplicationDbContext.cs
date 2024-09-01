@@ -26,6 +26,7 @@ public class ApplicationDbContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Content).HasColumnName("content");
+            entity.Property(e => e.Rating).HasColumnName("rating");
             entity.Property(e => e.CreationId).HasColumnName("creation_id");
             entity.Property(e => e.PublicationDate).HasColumnName("publication_date");
             entity.Property(e => e.UserId).HasColumnName("user_id");
@@ -48,9 +49,9 @@ public class ApplicationDbContext : DbContext
                 .HasColumnName("content");
             entity.Property(e => e.AuthorId).HasColumnName("author_id");
             entity.Property(e => e.PublicationDate).HasColumnName("publication_date");
-            entity.Property(e => e.Rating)
+            entity.Property(e => e.TotalRating)
                 .HasDefaultValue(0)
-                .HasColumnName("rating");
+                .HasColumnName("total_rating");
             entity.Property(e => e.RatingCount)
                 .HasDefaultValue(0)
                 .HasColumnName("rating_count");

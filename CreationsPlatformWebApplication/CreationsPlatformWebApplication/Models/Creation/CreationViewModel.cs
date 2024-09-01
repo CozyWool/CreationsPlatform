@@ -4,4 +4,5 @@ public class CreationViewModel
 {
     public CreationModel Creation { get; set; }
     public List<GenreModel> Genres { get; set; }
+    public List<GenreModel> OldGenres { get; set; }
 }

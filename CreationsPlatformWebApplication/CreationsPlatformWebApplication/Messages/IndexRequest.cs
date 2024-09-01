@@ -20,4 +20,7 @@ public class IndexRequest
 
     [BindProperty(Name = "publishedAfter")]
     public DateTime? PublishedAfter { get; set; }
+
+    [BindProperty(Name = "ratingBefore")] public int? RatingBefore { get; set; }
+    [BindProperty(Name = "ratingAfter")] public int? RatingAfter { get; set; }
 }

@@ -1,5 +1,6 @@
 using CreationsPlatformWebApplication.DataAccess.Contexts;
 using CreationsPlatformWebApplication.DataAccess.Entities;
+using CreationsPlatformWebApplication.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace CreationsPlatformWebApplication.DataAccess.Repositories;
@@ -7,10 +8,12 @@ namespace CreationsPlatformWebApplication.DataAccess.Repositories;
 public class CommentRepository : ICommentRepository
 {
     private readonly ApplicationDbContext _applicationDbContext;
+    private readonly ICreationRepository _creationRepository;
 
-    public CommentRepository(ApplicationDbContext applicationDbContext)
+    public CommentRepository(ApplicationDbContext applicationDbContext, ICreationRepository creationRepository)
     {
         _applicationDbContext = applicationDbContext;
+        _creationRepository = creationRepository;
     }
 
     public async Task<List<CommentEntity>> GetAll() =>
@@ -39,7 +42,12 @@ public class CommentRepository : ICommentRepository
         entity.PublicationDate = DateTime.UtcNow;
 
         _applicationDbContext.Comments.Add(entity);
-        (await _applicationDbContext.Creations.FirstOrDefaultAsync(x => x.Id == entity.CreationId)).CommentCount++;
+        var creationEntity = await _creationRepository.GetById(entity.CreationId);
+        creationEntity.TotalRating = (creationEntity.TotalRating * creationEntity.RatingCount + entity.Rating) /
+                                     (creationEntity.RatingCount + 1);
+        creationEntity.RatingCount++;
+        creationEntity.CommentCount++;
+        await _creationRepository.Update(creationEntity);
         await _applicationDbContext.SaveChangesAsync();
     }
 
