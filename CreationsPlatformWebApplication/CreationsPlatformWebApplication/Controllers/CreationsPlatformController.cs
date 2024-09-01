@@ -109,8 +109,7 @@ public class CreationsPlatformController : Controller
         var creationModel = await _creationService.GetById(id);
         if (creationModel == null)
             throw new ArgumentException();
-        // return NotFound(id);
-
+        creationModel.Comments = creationModel.Comments.OrderByDescending(model => model.PublicationDate).ToList();
         var viewModel = new DetailedCreationViewModel
         {
             Creation = creationModel,
