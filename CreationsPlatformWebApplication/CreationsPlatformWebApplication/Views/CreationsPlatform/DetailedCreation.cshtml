@@ -14,7 +14,7 @@
                     <b>@Model.Creation.Genres[i].Name@(i + 1 == Model.Creation.Genres.Count ? "" : ", ")</b>
                 }
             </p>
-            <p>@Html.DisplayNameFor(m => m.Creation.TotalRating): <i>@Model.Creation.TotalRating / 100</i>  (@Html.DisplayNameFor(m => m.Creation.RatingCount) @Model.Creation.RatingCount)</p>
+            <p>@Html.DisplayNameFor(m => m.Creation.TotalRating): <i>@Model.Creation.TotalRating / 100</i> (@Html.DisplayNameFor(m => m.Creation.RatingCount) @Model.Creation.RatingCount)</p>
             <p>@Html.DisplayNameFor(m => m.Creation.PublicationDate): <b>@Model.Creation.PublicationDate.ToShortDateString()</b></p>
         </div>
     </div>
@@ -22,17 +22,17 @@
 </div>
 <footer class="border-top footer mt-2">
     <div class="container">
-        <form class="form-inline" asp-controller="CreationsPlatform" asp-action="AddComment" method="post" oninput="onFormInput()">
+        <form class="form-inline" asp-controller="CreationsPlatform" asp-action="AddComment" method="post" oninput="onFormInput('rating', 'ratingValue')">
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
             <input asp-for="Comment.CreationId" value="@Model.Creation.Id" hidden/>
             <input asp-for="Comment.CreationTitle" value="@Model.Creation.Title" hidden/>
 
             <div class="mb-2 mt-2">
-                <label asp-for="Comment.Rating">@Html.DisplayNameFor(m => m.Comment.Rating)</label>
+                <label>@Html.DisplayNameFor(m => m.Comment.Rating)</label>
                 <br/>
-                <output id="RatingValue" name="RatingValue" for="Rating">0</output>
+                <output id="ratingValue" name="ratingValue" for="rating">@Model.Comment.Rating</output>
                 <br/>
-                <input class="form-range" asp-for="Comment.Rating" id="Rating" type="range" step="1" max="100" value="0">
+                <input class="form-range" name="Comment.Rating" id="rating" type="range" step="1" max="100" value="@Model.Comment.Rating">
             </div>
             <div class="form-floating mb-2">
                 <textarea class="form-control m-auto w-100" style="height: 300px" asp-for="Comment.Content"></textarea>
@@ -51,7 +51,7 @@
             {
                 <li class="list-group-item d-flex justify-content-between align-items-start">
                     <div class="ms-2 me-auto">
-                        <div class="fw-bold">@comment.Username - @Html.DisplayNameFor(m => m.Creation.TotalRating): <i>@comment.Rating / 100</i></div>
+                        <div class="fw-bold">@comment.Username - <i>@(comment.Rating != -1 ? $"{Html.DisplayNameFor(m => m.Creation.TotalRating)}: {comment.Rating} / 100" : "Уже оценивал произведение")</i></div>
                         @comment.Content
                     </div>
                     @if (User.Identity is {IsAuthenticated: true} && User.Identity.Name == comment.Username)

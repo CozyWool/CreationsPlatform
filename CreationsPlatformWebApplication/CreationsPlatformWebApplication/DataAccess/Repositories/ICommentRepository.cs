@@ -6,7 +6,7 @@ public interface ICommentRepository
 {
     Task<List<CommentEntity>> GetAll();
     Task<CommentEntity?> GetById(int id);
-    // Task<CommentEntity?> GetByCreationId(int creationId);
     Task Create(CommentEntity entity);
+    Task Update(CommentEntity entity);
     Task<bool> Delete(int id);
 }

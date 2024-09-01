@@ -2,7 +2,6 @@ using CreationsPlatformWebApplication.DataAccess.Contexts;
 using CreationsPlatformWebApplication.DataAccess.Repositories;
 using CreationsPlatformWebApplication.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace CreationsPlatformWebApplication;
