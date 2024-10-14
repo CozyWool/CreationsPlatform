@@ -192,7 +192,7 @@ public class CreationsPlatformController(
         return View("EditCreation", creationViewModel);
     }
 
-    [HttpPost("edit")]
+    [HttpPost("edit/{id:int}")]
     public async Task<IActionResult> Edit([FromForm(Name = "Creation")] CreationModel creationModel)
     {
         if (creationModel.Author.Id.ToString() != User.Claims.FirstOrDefault(claim => claim.Type == "UserId").Value)

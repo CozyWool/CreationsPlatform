@@ -2,7 +2,7 @@
 
 <div class="row w-100 m-auto">
     <div class="col-md-12 align-content-center">
-        <form asp-action="Edit" asp-controller="CreationsPlatform" method="post">
+        <form asp-action="Edit" asp-controller="CreationsPlatform" asp-route-id="@Model.Creation.Id" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
             <input asp-for="Creation.Author.Id" hidden value="@Model.Creation.Author.Id">
             <input name="Creation.PublicationDate" type="date" hidden value="@Model.Creation.PublicationDate.ToString("yyyy-MM-dd")">

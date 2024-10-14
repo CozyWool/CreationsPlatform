@@ -229,12 +229,12 @@ else
         try  {
             let confirmedDelete = confirm("Вы уверены, что хотите удалить это произведение?")
             if (!confirmedDelete) return
-            await fetch(`/CreationsPlatform/` + id, {
+            await fetch(`/creations-platform/` + id, {
                 method: "DELETE",
                 headers: { "Accept": "application/json", "Content-Type": "application/json" }
             });
             alert("Успешно удалено!")
-            window.location.href = '/CreationsPlatform/my-creations';
+            window.location.href = '/creations-platform/my-creations';
         } catch (error) {
             console.log(error);
             alert('Произошла ошибка при удалении/Нет доступа');
