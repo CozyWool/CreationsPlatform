@@ -2,6 +2,8 @@ using CreationsPlatformWebApplication.DataAccess.Contexts;
 using CreationsPlatformWebApplication.DataAccess.Repositories;
 using CreationsPlatformWebApplication.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace CreationsPlatformWebApplication;
@@ -58,6 +60,7 @@ public class Startup(IConfiguration configuration)
 
         app.UseEndpoints(endpoints =>
         {
+            endpoints.MapGet("/alive", () => "I'm alive");
             endpoints.MapControllerRoute(name: "default",
                 pattern: "{controller=CreationsPlatform}/{action=Index}/{id?}");
         });
